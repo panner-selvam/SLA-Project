@@ -1,0 +1,693 @@
+package com.sla.report;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ResourceBundle;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import Database.Database;
+import Database.Database1;
+
+/**
+ * Servlet implementation class Fetching_fst_Series_report_lazyload
+ */
+@WebServlet("/Fetching_fst_Series_report_lazyload")
+public class Fetching_fst_Series_report_lazyload extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+       
+    /**
+     * @see HttpServlet#HttpServlet()
+     */
+    public Fetching_fst_Series_report_lazyload() {
+        super();
+        // TODO Auto-generated constructor stub
+    }
+
+	/**
+	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+	 */
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/**
+	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+	 */
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		response.setContentType("text/html;charset=utf-8");
+		System.out.println(">>>>>>>>>>Fetching_fst_Series_report_lazyload>>>>>>>>>");
+		PrintWriter out = response.getWriter();
+		Database db = new Database();
+		Database1 db1 = new Database1();
+		Connection con = null, con1 = null;
+		JSONObject obj = null;
+		JSONArray arr = new JSONArray();
+		ResourceBundle resource = ResourceBundle.getBundle("commonvariables");
+		
+		
+		String series_name_1_1a=resource.getString("series_name_1_1a");
+		String series_name_1_1b=resource.getString("series_name_1_1b");
+		String series_name_1_2=resource.getString("series_name_1_2");
+		String series_name_1_3=resource.getString("series_name_1_3");
+		String series_name_1_4=resource.getString("series_name_1_4");
+		String series_name_1_5=resource.getString("series_name_1_5");
+		String series_name_1_6=resource.getString("series_name_1_6");
+		String series_name_1_7=resource.getString("series_name_1_7");
+		String series_name_1_8=resource.getString("series_name_1_8");
+		String series_name_1_9=resource.getString("series_name_1_9");
+		String series_name_1_10=resource.getString("series_name_1_10");
+		String series_name_1_11=resource.getString("series_name_1_11");		
+		String series_name_1_12=resource.getString("series_name_1_12");
+		
+		
+		
+		String sub_series_list=""+request.getParameter("sub_series_list");
+		String series_list=""+request.getParameter("series_list");
+		String dp_start=""+request.getParameter("dp_start");
+		String dp_end=""+request.getParameter("dp_end");
+	
+		int pagecnt = 50;
+		System.out.println("pagecnt>>>>>>>>>>>" + pagecnt);
+		int vahan_pageIndex = Integer.parseInt(request.getParameter("vahan_pageIndex"));
+		System.out.println("vahan_pageIndex>>>>>>>>>>>" + vahan_pageIndex);
+		int outputinfo = 0;
+		
+		
+		
+		int firstrow   =  (vahan_pageIndex - 1) * pagecnt +1;
+		int lastrow   = firstrow+pagecnt-1;
+		
+		String cond = "";
+		String tablename = "";
+		
+
+			if(!dp_start.equalsIgnoreCase("null") && !dp_start.equalsIgnoreCase("")){	
+				if( !sub_series_list.equalsIgnoreCase(series_name_1_1b) &&!sub_series_list.equalsIgnoreCase(series_name_1_1a) &&!sub_series_list.equalsIgnoreCase(series_name_1_2) && !sub_series_list.equalsIgnoreCase(series_name_1_8) && !sub_series_list.equalsIgnoreCase(series_name_1_9)&& !sub_series_list.equalsIgnoreCase(series_name_1_12)) { 
+				cond=cond+" and CAST(CONVERT(char(10),dt,126) AS DATE) >= CAST(CONVERT(char(10), '"+dp_start+"',126) AS DATE)";
+				}else {
+					if(sub_series_list.equalsIgnoreCase(series_name_1_8) || sub_series_list.equalsIgnoreCase(series_name_1_9)) {
+					cond=cond+" and CAST(CONVERT(char(10),insertdate,126) AS DATE) >= CAST(CONVERT(char(10), '"+dp_start+"',126) AS DATE)";
+					}
+					else if(sub_series_list.equalsIgnoreCase(series_name_1_2) ) {
+						cond=cond+" and CAST(CONVERT(char(10),date,126) AS DATE) >= CAST(CONVERT(char(10), '"+dp_start+"',126) AS DATE)";
+						}
+					else if(sub_series_list.equalsIgnoreCase(series_name_1_12) ) {
+						cond=cond+" and CAST(CONVERT(char(10),createdate,126) AS DATE) >= CAST(CONVERT(char(10), '"+dp_start+"',126) AS DATE)";
+						}
+					else if( sub_series_list.equalsIgnoreCase(series_name_1_1b) || sub_series_list.equalsIgnoreCase(series_name_1_1a) ) {
+						cond=cond+" and CAST(CONVERT(char(10),createdate,126) AS DATE) >= CAST(CONVERT(char(10), '"+dp_start+"',126) AS DATE)";
+						}
+				}
+			}
+			if(!dp_end.equalsIgnoreCase("null") && !dp_end.equalsIgnoreCase("")){		
+				if( !sub_series_list.equalsIgnoreCase(series_name_1_1b) &&!sub_series_list.equalsIgnoreCase(series_name_1_1a) &&!sub_series_list.equalsIgnoreCase(series_name_1_2) && !sub_series_list.equalsIgnoreCase(series_name_1_8) && !sub_series_list.equalsIgnoreCase(series_name_1_9) && !sub_series_list.equalsIgnoreCase(series_name_1_12)) { 
+				cond=cond+" and CAST(CONVERT(char(10),dt,126) AS DATE)<= CAST(CONVERT(char(10), '"+dp_end+"',126) AS DATE)";
+				}else {
+					
+					if(sub_series_list.equalsIgnoreCase(series_name_1_8) && sub_series_list.equalsIgnoreCase(series_name_1_9)) {
+					cond=cond+" and CAST(CONVERT(char(10),insertdate,126) AS DATE)<= CAST(CONVERT(char(10), '"+dp_end+"',126) AS DATE)";
+					}
+					else if(sub_series_list.equalsIgnoreCase(series_name_1_2) ) {
+						cond=cond+" and CAST(CONVERT(char(10),date,126) AS DATE) <= CAST(CONVERT(char(10), '"+dp_end+"',126) AS DATE)";
+						}
+					else if(sub_series_list.equalsIgnoreCase(series_name_1_12) ) {
+						cond=cond+" and CAST(CONVERT(char(10),createdate,126) AS DATE) <= CAST(CONVERT(char(10), '"+dp_end+"',126) AS DATE)";
+						}
+					else if( sub_series_list.equalsIgnoreCase(series_name_1_1b) || sub_series_list.equalsIgnoreCase(series_name_1_1a) ) {
+						cond=cond+" and CAST(CONVERT(char(10),createdate,126) AS DATE)  <= CAST(CONVERT(char(10), '"+dp_end+"',126) AS DATE)";
+						}
+					}
+			}
+			if(!sub_series_list.equalsIgnoreCase("null") && !sub_series_list.equalsIgnoreCase("")&& !sub_series_list.equalsIgnoreCase("select")){		
+				
+				
+				
+			} 
+if(!series_list.equalsIgnoreCase("null") && !series_list.equalsIgnoreCase("")&& !series_list.equalsIgnoreCase("select")){		
+				
+			} 
+	
+System.out.println("tablename"+tablename);
+		
+		String query ="";
+		String Totuniquecamcnt="",Total_online_camcnt="",Total_offline_ccnt="",Total_ratio_ccnt="",datedt="" ,
+		SystemIP="",Avg_DisplayFPS="",unique_Camera_Count="",Online_Camera_Count="",Offline_Camera_Count="",Ratio_Live_Camera="",Location="";
+		String	rownumber ="",Rcount="";
+		try {
+			
+			con1 = db1.connection_get();
+			if (con1 != null) {
+				
+				if(sub_series_list.equalsIgnoreCase(series_name_1_2)) 
+				{									
+		
+			query =  "SELECT  * 	FROM   ( SELECT     (select convert(numeric(10,2),( ROUND(SUM( cast (Avg as Float) ) / COUNT(*), 2)) ) avg  from [camera_Status_Avg] where isnull(id,'')!=''  "+cond+" )Total_Average ,  COUNT(*) OVER() as Rcount, ROW_NUMBER() OVER (ORDER BY id Desc) AS rownumber,  date,RIGHT(Convert(VARCHAR(20), StartTime, 0) ,9)StartTime,RIGHT(Convert(VARCHAR(20), EndTime, 0) ,9) EndTime,TotalCount,onlineCount,OfflineCount,Avg 	FROM   [camera_Status_Avg] where isnull(id,'')!='' "+cond+" 	) AS tbl 	WHERE  tbl.rownumber BETWEEN  "+firstrow+" AND "+lastrow+" ";
+				
+				}
+				else if(sub_series_list.equalsIgnoreCase(series_name_1_1a) || sub_series_list.equalsIgnoreCase(series_name_1_1b)) 
+				{									
+		
+					query =  "SELECT  * 	FROM   ( SELECT      COUNT(*) OVER() as Rcount, ROW_NUMBER() OVER (ORDER BY id Desc) AS rownumber,  CameraIP, Region, Zone, PS, Cameraname, CameraType, Connectiontype, CameraStatus, StartTIme, EndTime 	FROM   [CAMSTS] where isnull(id,'')!='' "+cond+" 	) AS tbl 	WHERE  tbl.rownumber BETWEEN  "+firstrow+" AND "+lastrow+" ";	
+				
+			}
+				ResultSet rs = db1.SelectData(query, con1);
+				if (rs != null) {
+					while (rs.next()) {
+						obj = new JSONObject();
+						Rcount = "" + rs.getString("Rcount");
+						if(Rcount.equalsIgnoreCase("") || Rcount.equalsIgnoreCase("null") || Rcount.equalsIgnoreCase(null)){
+							Rcount="";
+						}
+							rownumber = "" + rs.getString("rownumber");
+						if(rownumber.equalsIgnoreCase("") || rownumber.equalsIgnoreCase("null") || rownumber.equalsIgnoreCase(null)){
+							rownumber="";
+						}
+						if(sub_series_list.equalsIgnoreCase(series_name_1_2)) {
+					  String Total_Average = "" + rs.getString("Total_Average");
+						if(Total_Average.equalsIgnoreCase("") || Total_Average.equalsIgnoreCase("null") || Total_Average.equalsIgnoreCase(null)){
+							Total_Average="";
+						}
+						
+						
+						String	date = "" + rs.getString("date");
+						if(date.equalsIgnoreCase("") || date.equalsIgnoreCase("null") || date.equalsIgnoreCase(null)){
+							date="";
+						}
+						String	StartTime = "" + rs.getString("StartTime");
+						if(StartTime.equalsIgnoreCase("") || StartTime.equalsIgnoreCase("null") || StartTime.equalsIgnoreCase(null)){
+							StartTime="";
+						}
+						String	EndTime = "" + rs.getString("EndTime");
+						if(EndTime.equalsIgnoreCase("") || EndTime.equalsIgnoreCase("null") || EndTime.equalsIgnoreCase(null)){
+							EndTime="";
+						}
+						String	TotalCount = "" + rs.getString("TotalCount");
+						if(TotalCount.equalsIgnoreCase("") || TotalCount.equalsIgnoreCase("null") || TotalCount.equalsIgnoreCase(null)){
+							TotalCount="";
+						}
+						String	onlineCount = "" + rs.getString("onlineCount");
+						if(onlineCount.equalsIgnoreCase("") || onlineCount.equalsIgnoreCase("null") || onlineCount.equalsIgnoreCase(null)){
+							onlineCount="";
+						}
+						
+						String	OfflineCount = "" + rs.getString("OfflineCount");
+						if(OfflineCount.equalsIgnoreCase("") || OfflineCount.equalsIgnoreCase("null") || OfflineCount.equalsIgnoreCase(null)){
+							OfflineCount="";
+						}
+						String	Avg = "" + rs.getString("Avg");
+						if(Avg.equalsIgnoreCase("") || Avg.equalsIgnoreCase("null") || Avg.equalsIgnoreCase(null)){
+							Avg="";
+						}
+						
+						obj.put("date", date);
+						obj.put("Total_Average", Total_Average);
+						
+						obj.put("StartTime", StartTime);
+						obj.put("EndTime", EndTime);
+						
+						obj.put("EndTime", EndTime);
+						obj.put("TotalCount", TotalCount);											
+						obj.put("onlineCount", onlineCount);
+						obj.put("OfflineCount", OfflineCount);
+						obj.put("Avg", Avg);
+						
+						
+					}
+						
+						else if(sub_series_list.equalsIgnoreCase(series_name_1_1a)) 
+						{		
+						
+							String	CameraIP = "" + rs.getString("CameraIP");
+							if(CameraIP.equalsIgnoreCase("") || CameraIP.equalsIgnoreCase("null") || CameraIP.equalsIgnoreCase(null)){
+								CameraIP="";
+							}
+							
+							String	Region = "" + rs.getString("Region");
+							if(Region.equalsIgnoreCase("") || Region.equalsIgnoreCase("null") || Region.equalsIgnoreCase(null)){
+								Region="";
+							}
+							
+							String	Zone = "" + rs.getString("Zone");
+							if(Zone.equalsIgnoreCase("") || Zone.equalsIgnoreCase("null") || Zone.equalsIgnoreCase(null)){
+								Zone="";
+							}
+							
+							String	PS = "" + rs.getString("PS");
+							if(PS.equalsIgnoreCase("") || PS.equalsIgnoreCase("null") || PS.equalsIgnoreCase(null)){
+								PS="";
+							}
+							String	Cameraname = "" + rs.getString("Cameraname");
+							if(Cameraname.equalsIgnoreCase("") || Cameraname.equalsIgnoreCase("null") || Cameraname.equalsIgnoreCase(null)){
+								Cameraname="";
+							}
+						
+							String	CameraType = "" + rs.getString("CameraType");
+							if(CameraType.equalsIgnoreCase("") || CameraType.equalsIgnoreCase("null") || CameraType.equalsIgnoreCase(null)){
+								CameraType="";
+							}
+							String	Connectiontype = "" + rs.getString("Connectiontype");
+							if(Connectiontype.equalsIgnoreCase("") || Connectiontype.equalsIgnoreCase("null") || Connectiontype.equalsIgnoreCase(null)){
+								Connectiontype="";
+							}
+							String	CameraStatus = "" + rs.getString("CameraStatus");
+							if(CameraStatus.equalsIgnoreCase("") || CameraStatus.equalsIgnoreCase("null") || CameraStatus.equalsIgnoreCase(null)){
+								CameraStatus="";
+							}
+							String	StartTIme = "" + rs.getString("StartTIme");
+							if(StartTIme.equalsIgnoreCase("") || StartTIme.equalsIgnoreCase("null") || StartTIme.equalsIgnoreCase(null)){
+								StartTIme="";
+							}
+							String	EndTime = "" + rs.getString("EndTime");
+							if(EndTime.equalsIgnoreCase("") || EndTime.equalsIgnoreCase("null") || EndTime.equalsIgnoreCase(null)){
+								EndTime="";
+							}
+							
+							obj.put("Zone", Zone);
+							obj.put("Region", Region);
+							obj.put("CameraIP", CameraIP);
+							obj.put("PS", PS);
+							obj.put("Cameraname", Cameraname);
+							obj.put("CameraType", CameraType);
+							obj.put("CameraStatus", CameraStatus);
+							obj.put("Connectiontype", Connectiontype);
+							obj.put("StartTIme", StartTIme);
+							obj.put("EndTime", EndTime);
+							
+							
+							
+						
+						
+						}
+						
+						obj.put("Rcount", Rcount);
+						obj.put("rownumber", rownumber);
+						arr.put(obj);
+						}} //if and while
+			
+			
+			
+			}
+			
+			con = db.connection_get();
+			if (con != null) {
+				
+				
+				//1.1a& b
+				if(sub_series_list.equalsIgnoreCase(series_name_1_3)) 
+				{									
+		
+			query =  " SELECT  * 	FROM   ( SELECT     (select convert(numeric(10,2),( ROUND(SUM( cast (unique_Camera_Count as Float) ) / COUNT(*), 2)) )avg   from  dbo.CSV_AVG  where Location='CP_Office'  "+cond+" )Totuniquecamcnt ,  "
+				+"	 (select convert(numeric(10,2),( ROUND(SUM( cast (Online_Camera_Count as Float) ) / COUNT(*), 2)) ) avg  from  CSV_AVG where Location='CP_Office'   "+cond+"  )Total_online_camcnt ,  " 
+				+"		 (select ( ROUND(SUM( cast (Offline_Camera_Count as Float) ) / COUNT(*), 2)) avg  from CSV_AVG where Location='CP_Office'  "+cond+" )Total_offline_ccnt ,  "  
+					+"	 (select ( ROUND(SUM( cast (Ratio_Live_Camera as Float) ) / COUNT(*), 2)) avg  from CSV_AVG where Location='CP_Office' "+cond+" )Total_ratio_ccnt ,   "
+					 +"	COUNT(*) OVER() as Rcount, ROW_NUMBER() OVER (ORDER BY id Desc) AS rownumber,SystemIP,Avg_DisplayFPS,unique_Camera_Count,Online_Camera_Count,Offline_Camera_Count,Ratio_Live_Camera,Location ,convert(varchar(10),dt,101)dt	FROM  CSV_AVG where Location='CP_Office' "+cond+"	) AS tbl 	WHERE  tbl.rownumber BETWEEN "+firstrow+" AND "+lastrow+"";
+				}
+		
+				
+				//1.3
+				
+				if(sub_series_list.equalsIgnoreCase(series_name_1_3)) 
+						{									
+				
+					query =  " SELECT  * 	FROM   ( SELECT     (select convert(numeric(10,2),( ROUND(SUM( cast (unique_Camera_Count as Float) ) / COUNT(*), 2)) )avg   from  dbo.CSV_AVG  where Location='CP_Office'  "+cond+" )Totuniquecamcnt ,  "
+						+"	 (select convert(numeric(10,2),( ROUND(SUM( cast (Online_Camera_Count as Float) ) / COUNT(*), 2)) ) avg  from  CSV_AVG where Location='CP_Office'   "+cond+"  )Total_online_camcnt ,  " 
+						+"		 (select ( ROUND(SUM( cast (Offline_Camera_Count as Float) ) / COUNT(*), 2)) avg  from CSV_AVG where Location='CP_Office'  "+cond+" )Total_offline_ccnt ,  "  
+							+"	 (select ( ROUND(SUM( cast (Ratio_Live_Camera as Float) ) / COUNT(*), 2)) avg  from CSV_AVG where Location='CP_Office' "+cond+" )Total_ratio_ccnt ,   "
+							 +"	COUNT(*) OVER() as Rcount, ROW_NUMBER() OVER (ORDER BY id Desc) AS rownumber,SystemIP,Avg_DisplayFPS,unique_Camera_Count,Online_Camera_Count,Offline_Camera_Count,Ratio_Live_Camera,Location ,convert(varchar(10),dt,101)dt	FROM  CSV_AVG where Location='CP_Office' "+cond+"	) AS tbl 	WHERE  tbl.rownumber BETWEEN "+firstrow+" AND "+lastrow+"";
+						}
+				
+				if(sub_series_list.equalsIgnoreCase(series_name_1_4)) 
+				{									
+		
+			query =  " SELECT  * 	FROM   ( SELECT     (select convert(numeric(10,2),( ROUND(SUM( cast (unique_Camera_Count as Float) ) / COUNT(*), 2)) )avg   from  dbo.CSV_AVG  where Location='CP_Office'  "+cond+" )Totuniquecamcnt ,  "
+				+"	 (select convert(numeric(10,2),( ROUND(SUM( cast (Online_Camera_Count as Float) ) / COUNT(*), 2)) ) avg  from  CSV_AVG where Location='Second_CC'   "+cond+"  )Total_online_camcnt ,  " 
+				+"		 (select ( ROUND(SUM( cast (Offline_Camera_Count as Float) ) / COUNT(*), 2)) avg  from CSV_AVG where Location='Second_CC'  "+cond+" )Total_offline_ccnt ,  "  
+					+"	 (select ( ROUND(SUM( cast (Ratio_Live_Camera as Float) ) / COUNT(*), 2)) avg  from CSV_AVG where Location='Second_CC' "+cond+" )Total_ratio_ccnt ,   "
+					 +"	COUNT(*) OVER() as Rcount, ROW_NUMBER() OVER (ORDER BY id Desc) AS rownumber,SystemIP,Avg_DisplayFPS,unique_Camera_Count,Online_Camera_Count,Offline_Camera_Count,Ratio_Live_Camera,Location ,convert(varchar(10),dt,101)dt	FROM  CSV_AVG where Location='Second_CC' "+cond+"	) AS tbl 	WHERE  tbl.rownumber BETWEEN "+firstrow+" AND "+lastrow+"";
+				}
+				if(sub_series_list.equalsIgnoreCase(series_name_1_5)) 
+				{									
+		
+			query =  " SELECT  * 	FROM   ( SELECT     (select convert(numeric(10,2),( ROUND(SUM( cast (unique_Camera_Count as Float) ) / COUNT(*), 2)) )avg   from  dbo.CSV_AVG  where Location='Traffic_CC'  "+cond+" )Totuniquecamcnt ,  "
+				+"	 (select convert(numeric(10,2),( ROUND(SUM( cast (Online_Camera_Count as Float) ) / COUNT(*), 2)) ) avg  from  CSV_AVG where Location='Traffic_CC'   "+cond+"  )Total_online_camcnt ,  " 
+				+"		 (select ( ROUND(SUM( cast (Offline_Camera_Count as Float) ) / COUNT(*), 2)) avg  from CSV_AVG where Location='Traffic_CC'  "+cond+" )Total_offline_ccnt ,  "  
+					+"	 (select ( ROUND(SUM( cast (Ratio_Live_Camera as Float) ) / COUNT(*), 2)) avg  from CSV_AVG where Location='Traffic_CC' "+cond+" )Total_ratio_ccnt ,   "
+					 +"	COUNT(*) OVER() as Rcount, ROW_NUMBER() OVER (ORDER BY id Desc) AS rownumber,SystemIP,Avg_DisplayFPS,unique_Camera_Count,Online_Camera_Count,Offline_Camera_Count,Ratio_Live_Camera,Location ,convert(varchar(10),dt,101)dt	FROM  CSV_AVG where Location='Traffic_CC' "+cond+"	) AS tbl 	WHERE  tbl.rownumber BETWEEN "+firstrow+" AND "+lastrow+"";
+				}
+				if(sub_series_list.equalsIgnoreCase(series_name_1_6)) 
+				{									
+		
+			query =  " SELECT  * 	FROM   ( SELECT     (select convert(numeric(10,2),( ROUND(SUM( cast (unique_Camera_Count as Float) ) / COUNT(*), 2)) )avg   from  dbo.CSV_AVG  where Location like '%RVC_ZVC%'  "+cond+" )Totuniquecamcnt ,  "
+				+"	 (select convert(numeric(10,2),( ROUND(SUM( cast (Online_Camera_Count as Float) ) / COUNT(*), 2)) ) avg  from  CSV_AVG where Location like '%RVC_ZVC%'   "+cond+"  )Total_online_camcnt ,  " 
+				+"		 (select ( ROUND(SUM( cast (Offline_Camera_Count as Float) ) / COUNT(*), 2)) avg  from CSV_AVG where Location like '%RVC_ZVC%'  "+cond+" )Total_offline_ccnt ,  "  
+					+"	 (select ( ROUND(SUM( cast (Ratio_Live_Camera as Float) ) / COUNT(*), 2)) avg  from CSV_AVG where Location like '%RVC_ZVC%' "+cond+" )Total_ratio_ccnt ,   "
+					 +"	COUNT(*) OVER() as Rcount, ROW_NUMBER() OVER (ORDER BY id Desc) AS rownumber,SystemIP,Avg_DisplayFPS,unique_Camera_Count,Online_Camera_Count,Offline_Camera_Count,Ratio_Live_Camera,Location ,convert(varchar(10),dt,101)dt	FROM  CSV_AVG where Location like '%RVC_ZVC%' "+cond+"	) AS tbl 	WHERE  tbl.rownumber BETWEEN "+firstrow+" AND "+lastrow+"";
+				}
+				if(sub_series_list.equalsIgnoreCase(series_name_1_7)) 
+				{									
+		
+			query =  " SELECT  * 	FROM   ( SELECT     (select convert(numeric(10,2),( ROUND(SUM( cast (unique_Camera_Count as Float) ) / COUNT(*), 2)) )avg   from  dbo.CSV_AVG  where Location='PS_All'  "+cond+" )Totuniquecamcnt ,  "
+				+"	 (select convert(numeric(10,2),( ROUND(SUM( cast (Online_Camera_Count as Float) ) / COUNT(*), 2)) ) avg  from  CSV_AVG where Location='PS_All'   "+cond+"  )Total_online_camcnt ,  " 
+				+"		 (select ( ROUND(SUM( cast (Offline_Camera_Count as Float) ) / COUNT(*), 2)) avg  from CSV_AVG where Location='PS_All'  "+cond+" )Total_offline_ccnt ,  "  
+					+"	 (select ( ROUND(SUM( cast (Ratio_Live_Camera as Float) ) / COUNT(*), 2)) avg  from CSV_AVG where Location='PS_All' "+cond+" )Total_ratio_ccnt ,   "
+					 +"	COUNT(*) OVER() as Rcount, ROW_NUMBER() OVER (ORDER BY id Desc) AS rownumber,SystemIP,Avg_DisplayFPS,unique_Camera_Count,Online_Camera_Count,Offline_Camera_Count,Ratio_Live_Camera,Location ,convert(varchar(10),dt,101)dt	FROM  CSV_AVG where Location='PS_All' "+cond+"	) AS tbl 	WHERE  tbl.rownumber BETWEEN "+firstrow+" AND "+lastrow+"";
+				}
+				if(sub_series_list.equalsIgnoreCase(series_name_1_10)) 
+				{									
+		
+			query =  " SELECT  * 	FROM   ( SELECT     (select convert(numeric(10,2),( ROUND(SUM( cast (unique_Camera_Count as Float) ) / COUNT(*), 2)) )avg   from  dbo.CSV_AVG  where Location='CP_Office'  "+cond+" )Totuniquecamcnt ,  "
+				+"	 (select convert(numeric(10,2),( ROUND(SUM( cast (Online_Camera_Count as Float) ) / COUNT(*), 2)) ) avg  from  CSV_AVG where Location='CP_Office'   "+cond+"  )Total_online_camcnt ,  " 
+				+"		 (select ( ROUND(SUM( cast (Offline_Camera_Count as Float) ) / COUNT(*), 2)) avg  from CSV_AVG where Location='CP_Office'  "+cond+" )Total_offline_ccnt ,  "  
+					+"	 (select ( ROUND(SUM( cast (Ratio_Live_Camera as Float) ) / COUNT(*), 2)) avg  from CSV_AVG where Location='CP_Office' "+cond+" )Total_ratio_ccnt ,   "
+					 +"	COUNT(*) OVER() as Rcount, ROW_NUMBER() OVER (ORDER BY id Desc) AS rownumber,SystemIP,Avg_DisplayFPS,unique_Camera_Count,Online_Camera_Count,Offline_Camera_Count,Ratio_Live_Camera,Location ,convert(varchar(10),dt,101)dt	FROM  CSV_AVG where Location='CP_Office' "+cond+"	) AS tbl 	WHERE  tbl.rownumber BETWEEN "+firstrow+" AND "+lastrow+"";
+				}
+				if(sub_series_list.equalsIgnoreCase(series_name_1_11)) 
+				{									
+		
+			query =  " SELECT  * 	FROM   ( SELECT     (select convert(numeric(10,2),( ROUND(SUM( cast (unique_Camera_Count as Float) ) / COUNT(*), 2)) )avg   from  dbo.CSV_AVG  where Location='DC1_DC2_A'  "+cond+" )Totuniquecamcnt ,  "
+				+"	 (select convert(numeric(10,2),( ROUND(SUM( cast (Online_Camera_Count as Float) ) / COUNT(*), 2)) ) avg  from  CSV_AVG where Location='DC1_DC2_A'   "+cond+"  )Total_online_camcnt ,  " 
+				+"		 (select ( ROUND(SUM( cast (Offline_Camera_Count as Float) ) / COUNT(*), 2)) avg  from CSV_AVG where Location='DC1_DC2_A'  "+cond+" )Total_offline_ccnt ,  "  
+					+"	 (select ( ROUND(SUM( cast (Ratio_Live_Camera as Float) ) / COUNT(*), 2)) avg  from CSV_AVG where Location='DC1_DC2_A' "+cond+" )Total_ratio_ccnt ,   "
+					 +"	COUNT(*) OVER() as Rcount, ROW_NUMBER() OVER (ORDER BY id Desc) AS rownumber,SystemIP,Avg_DisplayFPS,unique_Camera_Count,Online_Camera_Count,Offline_Camera_Count,Ratio_Live_Camera,Location ,convert(varchar(10),dt,101)dt	FROM  CSV_AVG where Location='DC1_DC2_A' "+cond+"	) AS tbl 	WHERE  tbl.rownumber BETWEEN "+firstrow+" AND "+lastrow+"";
+				}
+				if(sub_series_list.equalsIgnoreCase(series_name_1_12)) 
+				{									
+		
+			query =  " SELECT  * 	FROM   ( SELECT     (select convert(numeric(10,2),( ROUND(SUM( cast (unique_Camera_Count as Float) ) / COUNT(*), 2)) )avg   from  dbo.CSV_AVG  where Location='DC1_DC2_B'  "+cond+" )Totuniquecamcnt ,  "
+				+"	 (select convert(numeric(10,2),( ROUND(SUM( cast (Online_Camera_Count as Float) ) / COUNT(*), 2)) ) avg  from  CSV_AVG where Location='DC1_DC2_B'   "+cond+"  )Total_online_camcnt ,  " 
+				+"		 (select ( ROUND(SUM( cast (Offline_Camera_Count as Float) ) / COUNT(*), 2)) avg  from CSV_AVG where Location='DC1_DC2_B'  "+cond+" )Total_offline_ccnt ,  "  
+					+"	 (select ( ROUND(SUM( cast (Ratio_Live_Camera as Float) ) / COUNT(*), 2)) avg  from CSV_AVG where Location='DC1_DC2_B' "+cond+" )Total_ratio_ccnt ,   "
+					 +"	COUNT(*) OVER() as Rcount, ROW_NUMBER() OVER (ORDER BY id Desc) AS rownumber,SystemIP,Avg_DisplayFPS,unique_Camera_Count,Online_Camera_Count,Offline_Camera_Count,Ratio_Live_Camera,Location ,convert(varchar(10),dt,101)dt	FROM  CSV_AVG where Location='DC1_DC2_B' "+cond+"	) AS tbl 	WHERE  tbl.rownumber BETWEEN "+firstrow+" AND "+lastrow+"";
+				}
+				
+				/*if(sub_series_list.equalsIgnoreCase(series_name_1_12)) 
+				{									
+		
+			query =  " SELECT  * 	FROM   ( SELECT     (select convert(numeric(10,2),( ROUND(SUM( cast (unique_Camera_Count as Float) ) / COUNT(*), 2)) )avg   from  dbo.CSV_AVG  where Location='DC1_DC2_B'  "+cond+" )Totuniquecamcnt ,  "
+				+"	 (select convert(numeric(10,2),( ROUND(SUM( cast (Online_Camera_Count as Float) ) / COUNT(*), 2)) ) avg  from  CSV_AVG where Location='DC1_DC2_B'   "+cond+"  )Total_online_camcnt ,  " 
+				+"		 (select ( ROUND(SUM( cast (Offline_Camera_Count as Float) ) / COUNT(*), 2)) avg  from CSV_AVG where Location='DC1_DC2_B'  "+cond+" )Total_offline_ccnt ,  "  
+					+"	 (select ( ROUND(SUM( cast (Ratio_Live_Camera as Float) ) / COUNT(*), 2)) avg  from CSV_AVG where Location='DC1_DC2_B' "+cond+" )Total_ratio_ccnt ,   "
+					 +"	COUNT(*) OVER() as Rcount, ROW_NUMBER() OVER (ORDER BY id Desc) AS rownumber,SystemIP,Avg_DisplayFPS,unique_Camera_Count,Online_Camera_Count,Offline_Camera_Count,Ratio_Live_Camera,Location ,convert(varchar(10),dt,101)dt	FROM  CSV_AVG where Location='DC1_DC2_B' "+cond+"	) AS tbl 	WHERE  tbl.rownumber BETWEEN "+firstrow+" AND "+lastrow+"";
+				}*/
+				if(sub_series_list.equalsIgnoreCase(series_name_1_8)) 
+				{									
+		
+				query="	SELECT  * 	FROM   ( SELECT     (select convert(numeric(10,2),( ROUND(SUM( cast (uptime as Float) ) / COUNT(*), 2)) ) avg  from MobileVan where isnull(id,'')!='' "+cond+" )Total_Average ,  COUNT(*) OVER() as Rcount, ROW_NUMBER() OVER (ORDER BY id Desc) AS rownumber, datetime,name,online,offline,uptime "
+						+"	FROM   MobileVan where isnull(id,'')!='' "+cond+" " 
+				       +"	) AS tbl "
+				+"	WHERE  tbl.rownumber BETWEEN "+firstrow+" AND "+lastrow+" ";
+				}
+				
+				if(sub_series_list.equalsIgnoreCase(series_name_1_9)) 
+				{									
+		
+				query="	SELECT  * 	FROM   ( SELECT     (select convert(numeric(10,2),( ROUND(SUM( cast (percentag as Float) ) / COUNT(*), 2)) ) avg  from qualityvideofields where isnull(id,'')!='' "+cond+" )Total_Average ,  COUNT(*) OVER() as Rcount, ROW_NUMBER() OVER (ORDER BY id Desc) AS rownumber, SystemIP,good,bad,dt,percentag "
+						+"	FROM   qualityvideofields where isnull(id,'')!='' "+cond+" " 
+				       +"	) AS tbl "
+				+"	WHERE  tbl.rownumber BETWEEN "+firstrow+" AND "+lastrow+" ";
+				}
+				
+				if(sub_series_list.equalsIgnoreCase(series_name_1_12)) 
+				{									
+		
+				query="	SELECT  * 	FROM   ( SELECT     (select convert(numeric(10,2),( ROUND(SUM( cast (avgvalue as Float) ) / COUNT(*), 2)) ) avg  from tbl_1_12 where isnull(id,'')!='' "+cond+" )Total_Average ,  COUNT(*) OVER() as Rcount, ROW_NUMBER() OVER (ORDER BY id Desc) AS rownumber, camera_ip,camera_name,region,zone,ps,minvalue,maxvalue,avgvalue"
+						+"	FROM   tbl_1_12 where isnull(id,'')!='' "+cond+" " 
+				       +"	) AS tbl "
+				+"	WHERE  tbl.rownumber BETWEEN "+firstrow+" AND "+lastrow+" ";
+				}
+				
+				
+				ResultSet rs = db.SelectData(query, con);
+				
+				
+				if (rs != null) {
+					while (rs.next()) {
+						obj = new JSONObject();
+						
+						if(!sub_series_list.equalsIgnoreCase(series_name_1_1b) &&!sub_series_list.equalsIgnoreCase(series_name_1_1a) &&!sub_series_list.equalsIgnoreCase(series_name_1_2) &&!sub_series_list.equalsIgnoreCase(series_name_1_8) && !sub_series_list.equalsIgnoreCase(series_name_1_9) && !sub_series_list.equalsIgnoreCase(series_name_1_12)) { 
+						datedt = "" + rs.getString("dt");
+						if(datedt.equalsIgnoreCase("") || datedt.equalsIgnoreCase("null") || datedt.equalsIgnoreCase(null)){
+							datedt="";
+						}
+						Totuniquecamcnt = "" + rs.getString("Totuniquecamcnt");
+						if(Totuniquecamcnt.equalsIgnoreCase("") || Totuniquecamcnt.equalsIgnoreCase("null") || Totuniquecamcnt.equalsIgnoreCase(null)){
+							Totuniquecamcnt="";
+						}
+						Totuniquecamcnt = Totuniquecamcnt.trim();
+						Total_online_camcnt = "" + rs.getString("Total_online_camcnt");
+						if(Total_online_camcnt.equalsIgnoreCase("") || Total_online_camcnt.equalsIgnoreCase("null") || Total_online_camcnt.equalsIgnoreCase(null)){
+							Total_online_camcnt="";
+						}
+						Total_online_camcnt = Total_online_camcnt.trim();
+						Total_offline_ccnt = "" + rs.getString("Total_offline_ccnt");
+						if(Total_offline_ccnt.equalsIgnoreCase("") || Total_offline_ccnt.equalsIgnoreCase("null") || Total_offline_ccnt.equalsIgnoreCase(null)){
+							Total_offline_ccnt="";
+						}
+						Total_offline_ccnt = Total_offline_ccnt.trim();
+						
+						Total_ratio_ccnt = "" + rs.getString("Total_ratio_ccnt");
+						if(Total_ratio_ccnt.equalsIgnoreCase("") || Total_ratio_ccnt.equalsIgnoreCase("null") || Total_ratio_ccnt.equalsIgnoreCase(null)){
+							Total_ratio_ccnt="";
+						}
+						Total_ratio_ccnt = Total_ratio_ccnt.trim();
+						SystemIP = "" + rs.getString("SystemIP");
+						if(SystemIP.equalsIgnoreCase("") || SystemIP.equalsIgnoreCase("null") || SystemIP.equalsIgnoreCase(null)){
+							SystemIP="";
+						}
+						SystemIP = SystemIP.trim();			
+						Avg_DisplayFPS = "" + rs.getString("Avg_DisplayFPS");
+						if(Avg_DisplayFPS.equalsIgnoreCase("") || Avg_DisplayFPS.equalsIgnoreCase("null") || Avg_DisplayFPS.equalsIgnoreCase(null)){
+							Avg_DisplayFPS="";
+						}
+						Avg_DisplayFPS = Avg_DisplayFPS.trim();			
+						unique_Camera_Count = "" + rs.getString("unique_Camera_Count");
+						if(unique_Camera_Count.equalsIgnoreCase("") || unique_Camera_Count.equalsIgnoreCase("null") || unique_Camera_Count.equalsIgnoreCase(null)){
+							unique_Camera_Count="";
+						}
+						unique_Camera_Count = unique_Camera_Count.trim();			
+						Online_Camera_Count = "" + rs.getString("Online_Camera_Count");
+						if(Online_Camera_Count.equalsIgnoreCase("") || Online_Camera_Count.equalsIgnoreCase("null") || Online_Camera_Count.equalsIgnoreCase(null)){
+							Online_Camera_Count="";
+						}
+						Online_Camera_Count = Online_Camera_Count.trim();			
+						Offline_Camera_Count = "" + rs.getString("Offline_Camera_Count");
+						if(Offline_Camera_Count.equalsIgnoreCase("") || Offline_Camera_Count.equalsIgnoreCase("null") || Offline_Camera_Count.equalsIgnoreCase(null)){
+							Offline_Camera_Count="";
+						}
+						Offline_Camera_Count = Offline_Camera_Count.trim();		
+						Ratio_Live_Camera = "" + rs.getString("Ratio_Live_Camera");
+						if(Ratio_Live_Camera.equalsIgnoreCase("") || Ratio_Live_Camera.equalsIgnoreCase("null") || Ratio_Live_Camera.equalsIgnoreCase(null)){
+							Ratio_Live_Camera="";
+						}
+						Ratio_Live_Camera = Ratio_Live_Camera.trim();		
+						Location = "" + rs.getString("Location");
+						if(Location.equalsIgnoreCase("") || Location.equalsIgnoreCase("null") || Location.equalsIgnoreCase(null)){
+							Location="";
+						}
+						Location = Location.trim();		
+												
+						
+						
+						obj.put("Totuniquecamcnt", Totuniquecamcnt);						
+						obj.put("Total_online_camcnt", Total_online_camcnt);
+						obj.put("Total_offline_ccnt", Total_offline_ccnt);
+						obj.put("Total_ratio_ccnt", Total_ratio_ccnt);
+						obj.put("datedt", datedt);
+						obj.put("SystemIP", SystemIP);						
+						obj.put("Avg_DisplayFPS", Avg_DisplayFPS);
+						obj.put("unique_Camera_Count", unique_Camera_Count);
+						obj.put("Online_Camera_Count", Online_Camera_Count);						
+						obj.put("Offline_Camera_Count", Offline_Camera_Count);
+						obj.put("Ratio_Live_Camera", Ratio_Live_Camera);
+						obj.put("Location", Location);
+						
+					}else {
+						if(sub_series_list.equalsIgnoreCase(series_name_1_8)) { 
+					String	datetime = "" + rs.getString("datetime");
+						if(datetime.equalsIgnoreCase("") || datetime.equalsIgnoreCase("null") || datetime.equalsIgnoreCase(null)){
+							datetime="";
+						}
+						datetime = datetime.trim();	
+						String	name = "" + rs.getString("name");
+						if(name.equalsIgnoreCase("") || name.equalsIgnoreCase("null") || name.equalsIgnoreCase(null)){
+							name="";
+						}
+						name = name.trim();	
+						String	online = "" + rs.getString("online");
+						if(online.equalsIgnoreCase("") || online.equalsIgnoreCase("null") || online.equalsIgnoreCase(null)){
+							online="";
+						}
+						online = online.trim();	
+						String	offline = "" + rs.getString("offline");
+						if(offline.equalsIgnoreCase("") || offline.equalsIgnoreCase("null") || offline.equalsIgnoreCase(null)){
+							offline="";
+						}
+						offline = offline.trim();	
+						String	uptime = "" + rs.getString("uptime");
+						if(uptime.equalsIgnoreCase("") || uptime.equalsIgnoreCase("null") || uptime.equalsIgnoreCase(null)){
+							uptime="";
+						}
+						uptime = uptime.trim();	
+						String	Total_Average = "" + rs.getString("Total_Average");
+						if(Total_Average.equalsIgnoreCase("") || Total_Average.equalsIgnoreCase("null") || Total_Average.equalsIgnoreCase(null)){
+							Total_Average="";
+						}
+						Total_Average = Total_Average.trim();	
+						obj.put("datetime", datetime);		
+						obj.put("name", name);		
+						obj.put("online", online);		
+						obj.put("offline", offline);		
+						obj.put("uptime", uptime);		
+						obj.put("Total_Average", Total_Average);		
+						}
+						//1.12
+						else if(sub_series_list.equalsIgnoreCase(series_name_1_12)) { 
+							String	camera_ip = "" + rs.getString("camera_ip");
+								if(camera_ip.equalsIgnoreCase("") || camera_ip.equalsIgnoreCase("null") || camera_ip.equalsIgnoreCase(null)){
+									camera_ip="";
+								}
+								camera_ip = camera_ip.trim();	
+								//
+								String	camera_name = "" + rs.getString("camera_name");
+								if(camera_name.equalsIgnoreCase("") || camera_name.equalsIgnoreCase("null") || camera_name.equalsIgnoreCase(null)){
+									camera_name="";
+								}
+								camera_name = camera_name.trim();	
+								String	region = "" + rs.getString("region");
+								if(region.equalsIgnoreCase("") || region.equalsIgnoreCase("null") || region.equalsIgnoreCase(null)){
+									region="";
+								}
+								region = region.trim();	
+								String	zone = "" + rs.getString("zone");
+								if(zone.equalsIgnoreCase("") || zone.equalsIgnoreCase("null") || zone.equalsIgnoreCase(null)){
+									zone="";
+								}
+								zone = zone.trim();	
+								String	ps = "" + rs.getString("ps");
+								if(ps.equalsIgnoreCase("") || ps.equalsIgnoreCase("null") || ps.equalsIgnoreCase(null)){
+									ps="";
+								}
+								ps = ps.trim();	
+								
+								String	minvalue = "" + rs.getString("minvalue");
+								if(minvalue.equalsIgnoreCase("") || minvalue.equalsIgnoreCase("null") || minvalue.equalsIgnoreCase(null)){
+									minvalue="";
+								}
+								minvalue = minvalue.trim();	
+								String	maxvalue = "" + rs.getString("maxvalue");
+								if(maxvalue.equalsIgnoreCase("") || maxvalue.equalsIgnoreCase("null") ||maxvalue.equalsIgnoreCase(null)){
+									maxvalue="";
+								}
+								maxvalue = maxvalue.trim();	
+								String	avgvalue = "" + rs.getString("avgvalue");
+								if(avgvalue.equalsIgnoreCase("") || avgvalue.equalsIgnoreCase("null") || avgvalue.equalsIgnoreCase(null)){
+									avgvalue="";
+								}
+								avgvalue = avgvalue.trim();	
+								String	Total_Average = "" + rs.getString("Total_Average");
+								if(Total_Average.equalsIgnoreCase("") || Total_Average.equalsIgnoreCase("null") || Total_Average.equalsIgnoreCase(null)){
+									Total_Average="";
+								}
+								Total_Average = Total_Average.trim();	
+								
+								obj.put("camera_name", camera_name);		
+								obj.put("region", region);		
+								obj.put("zone", zone);		
+								obj.put("ps", ps);		
+								obj.put("minvalue", minvalue);		
+								obj.put("maxvalue", maxvalue);		
+								obj.put("avgvalue", avgvalue);		
+								obj.put("Total_Average", Total_Average);		
+								}
+						
+						else {
+							
+								SystemIP = "" + rs.getString("SystemIP");
+							if(SystemIP.equalsIgnoreCase("") || SystemIP.equalsIgnoreCase("null") || SystemIP.equalsIgnoreCase(null)){
+								SystemIP="";
+							}
+							SystemIP = SystemIP.trim();	
+							String	good = "" + rs.getString("good");
+							if(good.equalsIgnoreCase("") || good.equalsIgnoreCase("null") || good.equalsIgnoreCase(null)){
+								good="";
+							}
+							good = good.trim();	
+							String	bad = "" + rs.getString("bad");
+							if(bad.equalsIgnoreCase("") || bad.equalsIgnoreCase("null") || bad.equalsIgnoreCase(null)){
+								bad="";
+							}
+							bad = bad.trim();	
+							String	dt = "" + rs.getString("dt");
+							if(dt.equalsIgnoreCase("") || dt.equalsIgnoreCase("null") || dt.equalsIgnoreCase(null)){
+								dt="";
+							}
+							dt = dt.trim();	
+							String	percentag = "" + rs.getString("percentag");
+							if(percentag.equalsIgnoreCase("") || percentag.equalsIgnoreCase("null") || percentag.equalsIgnoreCase(null)){
+								percentag="";
+							}
+							percentag = percentag.trim();	
+							
+							String	Total_Average = "" + rs.getString("Total_Average");
+							if(Total_Average.equalsIgnoreCase("") || Total_Average.equalsIgnoreCase("null") || Total_Average.equalsIgnoreCase(null)){
+								Total_Average="";
+							}
+							Total_Average = Total_Average.trim();	
+							obj.put("Total_Average", Total_Average);		
+							obj.put("percentag", percentag);		
+							obj.put("dt", dt);		
+							obj.put("bad", bad);		
+							obj.put("good", good);		
+							obj.put("SystemIP", SystemIP);		
+						}
+						
+					}
+						
+						 rownumber = ""
+								+ rs.getString("rownumber");
+						//System.out.println(">>>>>rownumber"+rownumber);
+						 Rcount = "" + rs.getString("Rcount");
+						//System.out.println(">>>>>Rcount"+Rcount);
+						obj.put("Rcount", Rcount);
+						obj.put("rownumber", rownumber);
+						arr.put(obj);
+					}
+					
+				}else {
+					System.out.println("No data");
+					//obj = new JSONObject();
+					//arr.put(obj);
+				}
+			}
+		//	out.println(aesUtil.encrypt(salt, iv, "data",arr.toString()));
+			
+			out.println(arr);
+			System.out.println(arr);
+			//System.out.println(aesUtil.encrypt(salt, iv, "data",arr.toString()));
+			out.close();
+			con.close();
+			
+			con1.close();
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+}

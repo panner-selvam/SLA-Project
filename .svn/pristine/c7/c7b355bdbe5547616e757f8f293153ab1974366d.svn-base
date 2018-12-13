@@ -1,0 +1,122 @@
+<%@ include file="Main.jsp"%>
+<div class="main_content">
+
+	<div class="breadCrumb module">
+		<ul class="text-center">
+			<li style="color: #0083bb;"><h4>
+					<b>SLA Matrix</b>
+				</h4></li>
+		</ul>
+	</div>
+	<div id="jCrumbs" class="breadCrumb module">
+		<div style="overflow: hidden; position: relative; width: 1065px;">
+			<div>
+				<ul style="width: 5006px;">
+					<li class="first"><a href="#"><i
+							class="glyphicon glyphicon-home"></i></a></li>
+					<li><a href="#">Report</a></li>
+					<!-- 	<li><a href="#">2.3</a></li> -->
+					<li class="last"><b>SLA Matrix</b></li>
+				</ul>
+			</div>
+		</div>
+	</div>
+	<section class="content_b">
+		<div class="row">
+			<div class="col-sm-2 col-md-3">
+				<label>From Date</label>
+				<div class="input-group" data-date-format="dd/mm/yyyy">
+					<span class="input-group-addon"><i
+						class="splashy-calendar_day"></i></span> <input class="form-control"
+						readonly="" type="text" id="dp_start"
+						style="position: static; background-color: white;" />
+				</div>
+			</div>
+			<div class="col-sm-3 col-md-3">
+				<label>To Date</label>
+				<div class="input-group" data-date-format="dd/mm/yyyy">
+					<span class="input-group-addon"><i
+						class="splashy-calendar_day"></i></span> <input class="form-control"
+						readonly="" type="text" id="dp_end"
+						style="position: static; background-color: white;" />
+				</div>
+			</div>
+			<div class="col-sm-4 col-md-6 text-right">
+				<br /> <input type="button" class="btn btn-warning" value="Clear"
+					id="btnclear" /> <input type="button" class="btn btn-primary"
+					value="Search" id="btnsearch" /> <input type="button"
+					class="btn btn-success" 
+					value="Show All" id="btnadd" />
+			</div>
+		</div>
+		
+	
+	<div class="row">
+		<div class="col-md-12">
+			<table class="table table-striped table-bordered table-condensed"
+				id="tbl23a">
+				<thead>
+					<tr>
+						<th class="text-center">S.No</th>
+						<th class="text-center">Action</th>
+						<th class="text-center">Date</th>		
+						<th class="text-center">Performance Area</th>				
+						<th class="text-center">Percentage</th>
+						<th class="text-center">Points</th>
+						<th class="text-center">Status</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td colspan="7" align="center"><lable> <b>No
+								Records Found</b></lable></td>
+					</tr>
+
+				</tbody>
+			</table>
+		</div>
+	</div>
+	</section>
+
+	<script type="text/javascript">
+		var flag = 0;
+		var id = "";
+		$(document).ready(function() {
+			var currentDate = new Date();
+			
+			$('#dp_start').datepicker({
+				maxDate : 0,
+				dateFormat : 'mm/dd/yy',
+				changeMonth : true,
+				changeYear : true,
+				currentyear : true,
+				onSelect : function(selected) {
+					$("#dp_end").datepicker("option", "minDate", selected)
+				}
+			});
+			$('#dp_end').datepicker({
+				maxDate : 0,
+				dateFormat : 'mm/dd/yy',
+				changeMonth : true,
+				changeYear : true,
+				currentyear : true,
+				onSelect : function(selected) {
+					$("#dp_start").datepicker("option", "maxDate", selected)
+				}
+			});
+			$("#dp_start").datepicker("setDate", currentDate);
+			$("#dp_end").datepicker("setDate", currentDate);
+			
+			
+		});
+		
+		$("#btnclear").click(function() {
+			var currentDate = new Date();
+			$("#dp_start").datepicker("setDate", currentDate);
+			$("#dp_end").datepicker("setDate", currentDate);
+			loaddata();
+		});
+
+	</script>
+
+</div>

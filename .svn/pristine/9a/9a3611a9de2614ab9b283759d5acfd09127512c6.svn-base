@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+	<bean id="dbcredentialbean" class="CommonConnection.DBCredentialBean">
+	<!-- <property name="Server_Name" value="192.168.137.5" />
+		 <property name="Port_Number" value="1433" />
+		 <property name="Database_Name" value="SLA" /> 
+		 <property name="User_Name" value="sa" /> 
+		 <property name="Pass_word" value="Disp123" />  -->
+	      <property name="Server_Name" value="192.168.137.33"/> 
+		 <property name="Port_Number" value="1433" />
+		 <property name="Database_Name" value="SMCVerintCSV" />
+		 <property name="User_Name" value="sa" /> 
+		 <property name="Pass_word" value="root" />  
+	<!-- <property name="Server_Name" value="182.18.161.229" />
+		 <property name="Port_Number" value="1433" />
+		 <property name="Database_Name" value="SLA" />
+		 <property name="User_Name" value="sa" />
+		 <property name="Pass_word" value="De\/@T3(H@123" /> -->
+	<!-- <property name="Server_Name" value="122.165.236.133" />
+		 <property name="Port_Number" value="1433" />
+		 <property name="Database_Name" value="SLA" /> 
+		 <property name="User_Name" value="sa" /> 
+		 <property name="Pass_word" value="Disp123"/> -->
+<!--     <property name="Server_Name" value="10.5.10.45" />
+		 <property name="Port_Number" value="1433" /> 
+		 <property name="Database_Name" value="SMCVerintCSV" />
+		 <property name="User_Name" value="sa1" />
+		 <property name="Pass_word" value="p@ssw0rd"/>  -->
+		 <!-- <property name="Server_Name" value="59.185.252.203" />
+		 <property name="Port_Number" value="1433" /> 
+		 <property name="Database_Name" value="SMCVerintCSV" />
+		 <property name="User_Name" value="sa1" />
+		 <property name="Pass_word" value="p@ssw0rd"/>    -->
+	</bean>
+</beans>                  
+

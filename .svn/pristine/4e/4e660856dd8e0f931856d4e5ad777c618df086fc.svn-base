@@ -1,0 +1,14 @@
+/* series table list */
+#series_list {  
+	background-color: #ffffff;
+    width: 100%;
+    height: 370px;
+    overflow: auto;
+} 
+.table-striped{
+	background-color : #ededed;
+}
+.table-hover>tbody>tr:hover
+{
+	background-color:#adadad;
+}

@@ -1,0 +1,361 @@
+<%@ include file="Main.jsp"%>
+<script src="<%=request.getContextPath()%>/js/highchart/highcharts.js"></script>
+<script src="<%=request.getContextPath()%>/js/highchart/drilldown.js"></script>
+<script src="js/datepicker.js"></script>
+<script src="js/bootbox.min.js"></script>
+<style>
+.ui-datepicker-calendar {
+	display: none;
+}
+
+.datepicker-months {
+	width: 215px;
+	height: 228px;
+}
+
+.datepicker-years {
+	width: 225px;
+	height: 228px;
+}
+</style>
+
+<div class="main_content">
+
+	<div id="jCrumbs" class="breadCrumb module">
+		<div style="overflow: hidden; position: relative; width: 1065px;">
+			<div>
+				<ul style="width: 5006px;">
+					<li class="first"><a href="#"><i
+							class="glyphicon glyphicon-home"></i></a></li>
+					<li><a href="#">Report</a></li>
+					<!-- 	<li><a href="#">2.3</a></li> -->
+					<li class="last"><b>SLA Summary Report</b></li>
+				</ul>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-12">
+			<div class="w-box" id="w_sort01">
+				<div class="w-box-header">Series</div>
+				<div class="w-box-content cnt_a">
+
+					<div class="sepH_b col-sm-3">
+
+						<label>From Date</label>
+						<div class="input-group">
+							<span class="input-group-addon"><i
+								class="splashy-calendar_day"></i></span> <input class="form-control"
+								type="text" id="fpick" style="background-color: white" readonly />
+						</div>
+					</div>
+					<div class="sepH_b col-sm-3">
+
+						<label>To Date</label>
+						<div class="input-group">
+							<span class="input-group-addon"><i
+								class="splashy-calendar_day"></i></span> <input class="form-control"
+								type="text" id="epick" style="background-color: white" readonly />
+						</div>
+					</div>
+
+					<div class="clearfix">
+						<div class="col-sm-6  mt-1">
+
+							<button class="btn btn-info mr-1" value="Search" id="search"
+								onClick="getsearch('search');">Search</button>
+
+							<button class="btn btn-warning mr-1  "
+								onClick="getsearch('refresh');">Refresh</button>
+
+							<button class="btn btn-primary mr-1  " data-toggle="modal"
+								data-target="#myModal">Add new</button>
+
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="row" id="series_list">
+		<table id="example"
+			class="table table-striped table-bordered table table-hover">
+			<thead>
+				<tr>
+					<th class="col-md-2 text-center">DATE</th>
+					<th class="col-md-2 text-center">NAME</th>
+					<th class="col-md-2 text-center">PLACE</th>
+					<th class="col-md-1 text-center">ONLINE</th>
+					<th class="col-md-2 text-center">OFFLINE</th>
+					<th class="col-md-2 text-center">UPTIME</th>
+					<th class="col-md-1 text-center">INSERTED DATE</th>
+				</tr>
+			</thead>
+			<tbody id="series_table"
+				style="height: 280px; overflow: scroll; width: 100%"></tbody>
+			</table>
+			<script>
+				function series_table(obj) {
+
+					var obj = obj;
+					var k = '<tbody class="table table-striped table-bordered table table-hover">'
+					if (obj == "") {
+						k += '<tr>';
+						k+='<td colspan="7" class="text-center" style="padding-top: 107px; width: 1080px; height: 260px;background-color: #eaeaea"><h2>DATA NOT AVAILABLE</h2></td>';
+						k += '</tr>';
+
+						k += '</tbody>';
+						document.getElementById('series_table').innerHTML = k;
+					} else {
+						$.each(obj, function(key, data) {
+							k += '<tr>';
+							k += '<td class="col-md-1 text-center">'
+										+ data.date + '</td>';
+							k += '<td class="col-md-1 text-center">'
+											+ data.name + '</td>';
+							k += '<td class="col-md-2 text-center">'
+									+ data.place + '</td>';
+							k += '<td class="col-md-2 text-center">'
+									+ data.online + '</td>';
+							k += '<td class="col-md-2 text-center">'
+									+ data.offline + '</td>';
+							k += '<td class="col-md-2 text-center">'
+										+ data.uptime + '</td>';
+										k+='<td class="col-md-1 text-center">'+data.inserted_date+'</td>';
+							k += '</tr>';
+						});
+						k += '</tbody>';
+						document.getElementById('series_table').innerHTML = k;
+					}
+				}
+			</script>
+	</div>
+</div>
+
+
+<div class="modal fade" id="myModal" role="dialog">
+	<div class="modal-dialog modal-lg">
+
+		<!-- Modal content-->
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" id="btn_click" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">
+					<b>Series 6.3</b>
+				</h4>
+			</div>
+			<div class="modal-body" id="modal-id">
+
+
+				<div class="row">
+				<div class="col-sm-6 ">
+						<label><b>Name</b></label> <input type="text"
+							class="form-control" id="Name">
+					</div>
+					<div class="col-sm-6" style="padding-top: 23px;float: right">
+						<div class="col-sm-6 ">
+							<label style="float: right"><b>Date</b></label>
+						</div>
+						<div class="col-sm-6 ">
+							<input class="form-control" type="text" id="seriesDate"
+								style="background-color: white" readonly />
+						</div>
+					</div>
+									
+				</div>
+				<div class="row">
+					<div class="col-sm-6 ">
+						<label><b>Place</b></label> <input type="text"
+							class="form-control" id="Place">
+					</div>
+					<div class="col-sm-6">
+						<label><b>Online</b></label> <input type="text"
+							class="form-control" id="Online">
+					</div>
+					
+				</div>
+				<div class="row">
+					<div class="col-sm-6 ">
+						<label><b>Offline</b></label> <input type="text"
+							class="form-control" id="Offline">
+					</div>
+					<div class="col-sm-6 ">
+						<label><b>Up Time</b></label> <input type="text"
+							class="form-control" id="upTime">
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="reset" class="btn btn-default" id="clr"
+					onclick="clear()">CLEAR</button>
+				<button type="button" class="btn btn-success" id="save" disabled>SAVE</button>
+			</div>
+		</div>
+
+	</div>
+</div>
+
+<script type="text/javascript">
+ 
+	var series_no = "tbl_6_3", series_date = "",name="",place="",online="",offline = "",uptime = "",from_date = "", to_date = "";
+	$("#clr").click(function() {
+		clear();
+	});
+	$(document)
+			.ready(
+					function() {
+						$('#modal-id')
+								.keyup(
+										function() {
+											series_date = $('#seriesDate')
+													.val();
+											name = $('#Name').val();
+											place = $('#Place').val();
+											online = $('#Online')
+													.val();
+											offline = $('#Offline')
+													.val();
+											uptime = $('#upTime').val();
+										
+
+											if (name != ''
+													&& place != ''
+													&& online != ''
+															&& offline != ''
+																&& uptime != '') {
+												document.getElementById("save").disabled = false;
+												
+											}else{
+												document.getElementById("save").disabled = true;
+											}
+										});
+					});
+
+	function clear() {
+		$('#Place').val('');
+		$('#Name').val('');
+		$('#Online').val('');
+		$('#Offline').val('');
+		$('#upTime').val('');
+	}
+	$("#save").click(function() {
+		clear();
+		var x = document.getElementById("myModal");
+		$.ajax({
+			type : "post",
+			url : path + "/Series_save",
+			async : false,
+			data : {
+				table_name : series_no,
+				series_date : series_date,
+				name : name,
+				place : place,
+				online : online,
+				offline : offline,
+				uptime : uptime
+			},
+
+			success : function(data) {
+				var status = data.trim();
+				if(status=="SUCCESS"){
+					$("#btn_click").click();
+					location.reload(true);	
+				}
+
+			},
+			error : function(xhr, ajaxOptions, thrownError) {
+				bootbox.alert("err" + xhr);
+			},
+			complete : function() {
+
+			}
+		});
+		return false;
+	});
+
+	$(document).ready(function() {
+		var currentDate = new Date();
+
+		$('#seriesDate').datepicker({
+			format : 'mm/dd/yy',
+			changeMonth : true,
+			changeYear : true,
+			changeDate : true,
+			autoclose : true,
+			endDate : "today"
+		});
+		
+
+		$('#fpick').datepicker({
+			format : 'mm/dd/yy',
+			changeMonth : true,
+			changeYear : true,
+			changeDate : true,
+			autoclose : true,
+			endDate : "today"
+		});
+		$('#epick').datepicker({
+			format : 'mm/dd/yy',
+			changeMonth : true,
+			changeYear : true,
+			changeDate : true,
+			autoclose : true,
+			endDate : "today"
+		});
+		$('#fpick').datepicker().datepicker('setDate', '-1d');
+		$('#epick').datepicker().datepicker('setDate', '-1d');
+		$('#seriesDate').datepicker().datepicker('setDate', '-1d');
+		
+
+		ajaxRetrieveCall();
+	});
+
+	$("#fpick").change(function() {
+		from_date = $("#fpick").val();
+	});
+	$("#epick").change(function() {
+		to_date = $("#epick").val();
+	});
+	$("#seriesDate").change(function() {
+		series_date = $("#seriesDate").val();
+	});
+	 
+
+	function ajaxRetrieveCall() {
+
+		$.ajax({
+			type : "post",
+			url : path + "/Series_retrieve",
+			async : false,
+			data : {
+				table_name : series_no,
+				startDate : from_date,
+				endDate : to_date
+			},
+
+			success : function(data) {
+				var obj = JSON.parse(data);
+				series_table(obj);
+			},
+			error : function(xhr, ajaxOptions, thrownError) {
+				bootbox.alert("err" + xhr);
+			},
+			complete : function() {
+
+			}
+		});
+		return false;
+	}
+
+	function getsearch(val) {
+
+		if (val == "search") {
+			from_date = $("#fpick").val();
+			to_date = $("#epick").val();
+			ajaxRetrieveCall(from_date, to_date);
+		} else if (val == "refresh") {
+			location.reload(true);
+		}
+
+	}
+</script>

@@ -1,0 +1,85 @@
+package com.sla.dashboard;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.ResultSet;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import Database.Database;
+/**
+ * Servlet implementation class Fetching_sticky_message
+ */
+@WebServlet("/Fetching_sticky_message")
+public class Fetching_sticky_message extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+	HttpSession session;
+	Connection con=null;
+    /**
+     * @see HttpServlet#HttpServlet()
+     */
+    public Fetching_sticky_message() {
+        super();
+        // TODO Auto-generated constructor stub
+    }
+   
+	/**
+	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+	 */
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException { 
+		PrintWriter out = response.getWriter();
+		session=request.getSession(false);
+		String id=(String)session.getAttribute("session_vid");
+		 ResultSet rs=null;
+		 Database db=new Database();
+		 JSONObject obj=new JSONObject();
+		 JSONArray arr=new JSONArray();
+		try {
+			 con = db.connection_get();
+			 if(con!=null) {
+				 String query="select message from Bind_messages where user_id='"+id+"'";
+				 rs = db.SelectData(query, con);
+				 while(rs.next()) {
+					 obj.put("message", rs.getString(1));
+				 }
+				 arr.put(obj);
+			 }
+		}catch(Exception e) {
+			System.out.println("err:"+e);
+		}
+		out.print(arr);
+	}
+
+	/**
+	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+	 */
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		PrintWriter out = response.getWriter();
+		session=request.getSession(false); 
+		String id=(String)session.getAttribute("session_vid");
+		String msg=request.getParameter("data");
+		Database db=new Database();
+		try {
+			 con = db.connection_get();
+			 if(con!=null) {
+				 String query="UPDATE Bind_messages SET message='"+msg+"' WHERE user_id='"+id+"'";
+				 String status = db.UpdateQuery(query, con);
+				 //System.out.println("Status :;"+status)	
+				 out.println(status);
+			 }
+		}catch(Exception e) {
+			System.out.println("err:"+e);
+		}
+		
+	}
+
+}

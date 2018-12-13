@@ -1,0 +1,23 @@
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
+<script>
+	function call(){
+		swal({
+			text : "Record has been saved",
+			type : "success",
+			confirmButtonColor : "green",
+			showConfirmButton: false,
+			timer: 1000
+
+		}).then(function() {
+	        swal.close();
+	        location.reload(true);
+		});
+
+
+	}
+</script>
+
+<div style="padding:250px">
+	<input type="button" value="click" onclick="call()">
+</div>
+

@@ -1,0 +1,87 @@
+package com.sla.dashboard;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import Database.Database;
+
+/**
+ * Servlet implementation class Fetching_Score_Details
+ */
+@WebServlet("/Fetching_Score_Details")
+public class Fetching_Score_Details extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+       
+    /**
+     * @see HttpServlet#HttpServlet()
+     */
+    public Fetching_Score_Details() {
+        super();
+        // TODO Auto-generated constructor stub
+    }
+
+	/**
+	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+	 */
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		response.getWriter().append("Served at: ").append(request.getContextPath());
+	}
+
+	/**
+	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+	 */
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		// TODO Auto-generated method stub
+				response.setContentType("text/html;charset=utf-8");
+			
+				PrintWriter out = response.getWriter();
+				Database db = new Database();
+				Connection con = null;
+				
+				JSONArray arr = new JSONArray();
+				try { 
+					con = db.connection_get();
+					if (con != null) {
+						String query = "select status, SUM(cast (isnull(points,'0') as Float)) as cnt from dbo.Bind_SLA_Module_Points where CAST(CONVERT(char(10),inserteddate,126) AS DATE) = convert(char(10),dateadd(day,datediff(day,1,GETDATE()),0),126) and isactive=1 group by status";
+						//String query = "select status, SUM(cast (points as Float)) as cnt from dbo.Bind_SLA_Module_Points where isactive=1 group by status";
+						ResultSet rs = db.SelectData(query, con);
+						 
+						if (rs != null) {
+							while (rs.next()) {
+								JSONObject obj = new JSONObject();
+								obj.put("status", rs.getString("status"));	
+								obj.put("cnt", rs.getString("cnt"));
+								arr.put(obj);
+							}
+							
+						}
+						else {
+							System.out.println("No records in Yesterday for TotalScore");
+						}
+						
+					}
+					out.println(arr);
+					out.close();
+					con.close();
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+	}
+}
+

@@ -1,0 +1,71 @@
+package com.sla.dashboard;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import Database.Database;
+
+@WebServlet("/Fetching_series_table")
+public class Fetching_series_table extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+       
+    public Fetching_series_table() {
+        super();
+    }
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		response.getWriter().append("Served at: ").append(request.getContextPath());
+	}
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+		response.setContentType("text/html;charset=utf-8");
+		PrintWriter out = response.getWriter();
+		Database db = new Database();
+		Connection con = null;
+		JSONObject obj = null;
+		JSONArray arr = new JSONArray();
+	
+		try {
+			con = db.connection_get();
+			if (con != null) {
+				String query = "select id,(Series_No+' '+Series_Name) Series,points,status from Bind_SLA_Module_Points where CONVERT(varchar(10),inserteddate,105) = convert(varchar(10), getDate()-1, 105) AND isactive='1' order by id,series_order asc";
+				ResultSet rs = db.SelectData(query, con);
+				if (rs != null) {
+					while (rs.next()) {
+						obj = new JSONObject();
+						/*System.out.print("  Table ID:"+rs.getString("id"));
+						System.out.print("	Table STATUS:"+rs.getString("status"));
+						System.out.print("	Table POINTS:"+rs.getString("points"));
+						System.out.println("  Table SERISE:"+rs.getString("Series"));*/
+						obj.put("ID",rs.getString("id"));
+						obj.put("SERISE",rs.getString("Series"));
+						obj.put("POINTS",rs.getString("points"));
+						obj.put("STATUS",rs.getString("status"));
+						arr.put(obj);
+						}
+
+				}
+				
+			}
+			out.println(arr);
+			out.close();
+			con.close();
+			//System.out.println(arr);
+		}
+		
+		catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	
+	}
+}
+
+

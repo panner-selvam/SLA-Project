@@ -1,0 +1,376 @@
+<%@ include file="Main.jsp"%>
+<script src="<%=request.getContextPath()%>/js/highchart/highcharts.js"></script>
+<script src="<%=request.getContextPath()%>/js/highchart/drilldown.js"></script>
+<script src="js/datepicker.js"></script>
+<script src="js/bootbox.min.js"></script> 
+<style>
+.ui-datepicker-calendar {
+    display: none;
+}
+.datepicker-months{
+	width : 215px;
+	height :228px;
+}
+.datepicker-years{
+	width : 225px;
+	height :228px;
+}
+.sticky {
+  position: fixed;
+  top: 0;
+  width: 100%;
+}
+
+</style>
+
+<div class="main_content">
+
+	<div id="jCrumbs" class="breadCrumb module">
+		<div style="overflow: hidden; position: relative; width: 1065px;">
+			<div>
+				<ul style="width: 5006px;">
+					<li class="first"><a href="#"><i
+							class="glyphicon glyphicon-home"></i></a></li>
+					<li><a href="#">Report</a></li>
+					<!-- 	<li><a href="#">2.3</a></li> -->
+					<li class="last"><b>SLA Summary Report</b></li>
+				</ul>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-12">
+				<div class="w-box" id="w_sort01">
+					<div class="w-box-header">Series</div>
+					<div class="w-box-content cnt_a">
+						
+						<div class="sepH_b col-sm-3">
+
+							<label>From Date</label>
+							<div class="input-group" >
+								<span class="input-group-addon"><i class="splashy-calendar_day"></i></span> 
+								<input  class="form-control" type="text"  id="fpick" style="background-color:white" readonly/>
+							</div>
+						</div>
+						<div class="sepH_b col-sm-3">
+
+							<label>To Date</label>
+							<div class="input-group" >
+								<span class="input-group-addon"><i class="splashy-calendar_day"></i></span> 
+								<input  class="form-control" type="text"  id="epick" style="background-color:white" readonly/>
+							</div>
+						</div>
+						
+						<div class="clearfix">
+							<div class="col-sm-6  mt-1">
+								
+								<button class="btn btn-info mr-1" value="Search" id="search"
+									onClick="getsearch('search');">Search</button>
+								
+								<button class="btn btn-warning mr-1  " 
+									onClick="getsearch('refresh');">Refresh</button>
+									
+								<button class="btn btn-primary mr-1  " data-toggle="modal" data-target="#myModal"
+									>Add new</button>
+							
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>	
+	</div>
+	<div class="row" id="series_list">
+			<table id="example" class="table table-striped table-bordered table table-hover"  style="width:100%">
+				<thead>
+					<tr>
+						<th class="col-md-1 text-center">DATE</th>
+						<th class="col-md-1 text-center">HOSTNAME</th>
+						<th class="col-md-1 text-center">IP ADDRESS</th>
+						<th class="col-md-1 text-center">DATA CENTER</th>
+						<th class="col-md-2 text-center">APPLICATION NAME</th>
+						<th class="col-md-2 text-center">DISPLAY NAME</th>
+						<th class="col-md-1 text-center">PROCESS NAME</th>
+						<th class="col-md-1 text-center">PROCESS AVAIALABILITY</th>
+						<th class="col-md-1 text-center">OVERALL AVAILABILITY</th>
+						<th class="col-md-1 text-center">INSERTED DATE</th>
+					</tr>
+				</thead>
+				<tbody id="series_table"></tbody>
+				</table>
+				<script>
+				function series_table(obj){
+					var obj = obj;
+					var k ='<tbody class="table table-striped table-bordered table table-hover">'
+					if(obj==""){
+							k+='<tr>';
+							k+='<td colspan="10" class="text-center" style="padding-top: 107px; width: 1080px; height: 260px;background-color: #eaeaea"><h2>DATA NOT AVAILABLE</h2></td>';
+							k+='</tr>';
+		
+						k+='</tbody>';
+						document.getElementById('series_table').innerHTML = k;
+					}
+					else{
+						$.each(obj,function (key, data){
+							k+='<tr>';
+							k+='<td class="col-md-1 text-center">'+data.date+'</td>';
+							k+='<td class="col-md-1 text-center">'+data.hostName+'</td>';
+							k+='<td class="col-md-1 text-center">'+data.ipAddress+'</td>';
+							k+='<td class="col-md-1 text-center">'+data.dataCenter+'</td>';
+							k+='<td class="col-md-2 text-center">'+data.applicationName+'</td>';
+							k+='<td class="col-md-2 text-center">'+data.displayName+'</td>';
+							k+='<td class="col-md-1 text-center">'+data.prcessName+'</td>';
+							k+='<td class="col-md-1 text-center">'+data.prcessAvailability+'</td>';
+							k+='<td class="col-md-1 text-center">'+data.overallAvailability+'</td>';
+							k+='<td class="col-md-1 text-center">'+data.inserted_date+'</td>';
+							k+='</tr>';
+					});
+					k+='</tbody>';
+					document.getElementById('series_table').innerHTML = k;
+				}
+			}
+			</script>
+		
+			
+		</div>
+</div>	
+	
+	
+	<div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog modal-lg">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title"> <b>Series 2.1 a</b></h4>
+        </div>
+        <div class="modal-body" id="modal-id">
+        	<div class="row">
+        		<div class="col-sm-6 " style="float:right">
+        			<div class="col-sm-6 ">
+        				<label style="float:right"><b>Series Date</b></label>
+        			</div>
+    				<div class="col-sm-6 ">
+    					<input class="form-control" type="text"  id="modeldate" style="background-color:white" readonly/>
+    				</div>   		
+        		</div>
+        	</div>
+        	<div class="row">
+        		<div class="col-sm-6 ">
+        			<label><b>Host name</b></label>
+        			<input type="text" class="form-control" id="hostName">
+        		</div>
+        		<div class="col-sm-6 ">
+    				<label><b>IP address</b></label>
+    				<input type="text" class="form-control" id="ipAddress">   		
+        		</div>
+        	</div>
+        	<div class="row">
+        		<div class="col-sm-6 ">
+        			<label><b>DataCenter</b></label>
+        			<input type="text" class="form-control" id="dataCenter">	
+        		</div>
+        		<div class="col-sm-6 ">
+        			<label><b>Application name</b></label>
+        			<input type="text" class="form-control" id="applicationName">
+        		</div>
+        	</div>
+        	<div class="row">
+        		<div class="col-sm-6 ">
+        			<label><b>Display name</b></label>
+        			<input type="text" class="form-control" id="displayName">
+        		</div>
+        		<div class="col-sm-6 ">
+        			<label><b>Process name</b></label>
+        			<input type="text" class="form-control" id="processName">
+        		</div>
+        	</div>
+        	<div class="row">
+        		<div class="col-sm-6 ">
+        			<label><b>Process Availability(%)</b></label>
+        			<input type="text" class="form-control" id="processAvailability">	
+        		</div>
+        		<div class="col-sm-6 ">
+        			<label><b>Overall Availability(%)</b></label>
+        			<input type="text" class="form-control" id="overallAvailability">
+        		</div>
+        	</div>
+        </div>
+        <div class="modal-footer">
+          <button type="reset" class="btn btn-default" id="clr" onclick="clear()">CLEAR</button>
+          <button type="button" class="btn btn-success" id="save" disabled>SAVE</button>
+        </div>
+      </div>
+      
+    </div>	
+</div>
+		
+		
+		<script>
+		
+		
+		
+		
+		var series_no="tbl_2_1_a",hostName,ipAddress,dataCenter,applicationName,displayName,processName,processAvailability,overallAvailability,series_date;
+		var from_date="",to_date="";
+		
+		
+		
+		$("#clr").click(function(){
+			clear();			 
+		});
+		$(document).ready(function (){
+			$('#modal-id').keyup(function (){
+				  hostName = $('#hostName').val();
+				  ipAddress = $('#ipAddress').val();
+				  dataCenter = $('#dataCenter').val();
+				  applicationName = $('#applicationName').val();
+				  displayName = $('#displayName').val();
+				  processName = $('#processName').val();
+				  processAvailability = $('#processAvailability').val();
+				  overallAvailability = $('#overallAvailability').val();
+				  series_date = $('#modeldate').val();
+				
+				if(hostName!=''&&ipAddress!=''&&dataCenter!=''&&applicationName!=''&&displayName!=''&&processName!=''&&processAvailability!=''&&overallAvailability!=''){
+					document.getElementById("save").disabled = false;
+				}
+				else{
+					document.getElementById("save").disabled = true;
+				}
+			}) ;
+		 });
+
+		function clear(){
+			$('#hostName').val('');
+			$('#ipAddress').val('');
+			$('#dataCenter').val('');
+			$('#applicationName').val('');
+			$('#displayName').val('');
+			$('#processName').val('');
+			$('#processAvailability').val('');
+			$('#overallAvailability').val('');
+		}
+		 $("#save").click(function(){ 
+			 clear();
+			 var x = document.getElementById("myModal");
+			 $.ajax({
+					type : "post",
+					url : path + "/Series_save",
+					async : false,
+					data:{
+						startDate:from_date,
+						endDate:to_date,
+			 			table_name:series_no,
+			 			hostName : hostName,
+			 			ipAddress : ipAddress,
+			 			dataCenter : dataCenter,
+			 			applicationName :applicationName,
+			 			displayName : displayName,
+			 			processName : processName,
+			 			processAvailability : processAvailability,
+			 			overallAvailability : overallAvailability,
+			 			series_date :series_date
+					},
+					
+					success : function(data) {	
+						x.close();	
+								
+					},
+					error : function(xhr, ajaxOptions, thrownError) {
+						bootbox.alert("err"+xhr);
+					},
+					complete : function() {
+							
+					}
+				});
+			return false;
+		 });
+		
+		
+		$(document).ready(function () {
+			var currentDate = new Date();
+			
+			$('#modeldate').datepicker({
+    			format : 'mm/dd/yy',
+    			changeMonth : true,
+    			changeYear : true,
+    			changeDate : true,
+    			autoclose: true ,
+    			endDate: "today"
+            }); 
+			$('#modeldate').datepicker().datepicker('setDate', '-1d');
+			
+            $('#fpick').datepicker({
+    			format : 'mm/dd/yy',
+    			changeMonth : true,
+    			changeYear : true,
+    			changeDate : true,
+    			autoclose: true ,
+    			endDate: "today"
+            });
+            $('#epick').datepicker({                  
+				format : 'mm/dd/yy',
+				changeMonth : true,
+				changeYear : true,
+				changeDate : true,
+				autoclose: true,
+				endDate: "today"
+            });
+            $('#fpick').datepicker().datepicker('setDate', '-1d');
+            $('#epick').datepicker().datepicker('setDate', '-1d');
+
+            ajaxRetrieveCall();	
+        });
+		
+		 $("#fpick").change(function(){
+		    	from_date = $("#fpick").val(); 
+		 });
+         $("#epick").change(function(){
+         		to_date = $("#epick").val(); 
+         });
+         
+        function ajaxRetrieveCall(){
+        		
+        	$.ajax({
+				type : "post",
+				url : path + "/Series_retrieve",
+				async : false,
+				data:{
+					table_name:series_no,
+					startDate:from_date,
+					endDate:to_date
+				},
+				
+				success : function(data) {
+					var obj = JSON.parse(data);
+					series_table(obj);					
+				},
+				error : function(xhr, ajaxOptions, thrownError) {
+					bootbox.alert("err"+xhr);
+				},
+				complete : function() {
+						
+				}
+			});
+		return false;
+        }
+				
+		
+	function getsearch(val){
+	
+		if(val=="search"){
+			from_date = $("#fpick").val(); 
+			to_date = $("#epick").val();
+			ajaxRetrieveCall(from_date,to_date);
+		}
+		else if(val=="refresh"){
+			location.reload(true);
+		}
+
+	
+	}
+
+
+		</script>
+
+

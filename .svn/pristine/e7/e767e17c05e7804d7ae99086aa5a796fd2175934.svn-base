@@ -1,0 +1,181 @@
+<%@ include file="Main.jsp"%>
+<script src="<%=request.getContextPath()%>/js/highchart/highcharts.js"></script>
+<script src="<%=request.getContextPath()%>/js/highchart/drilldown.js"></script>
+<script src="js/datepicker.js"></script>
+<script src="js/bootbox.min.js"></script>
+<style>
+.ui-datepicker-calendar {
+	display: none;
+}
+
+.datepicker-months {
+	width: 215px;
+	height: 228px;
+}
+
+.datepicker-years {
+	width: 225px;
+	height: 228px;
+}
+</style>
+
+<div class="main_content">
+
+	<div id="jCrumbs" class="breadCrumb module">
+		<div style="overflow: hidden; position: relative; width: 1065px;">
+			<div>
+				<ul style="width: 5006px;">
+					<li class="first"><a href="Dashboard.jsp"><i
+							class="glyphicon glyphicon-home"></i></a></li>
+					<li><a href="#">Report</a></li>
+					<!-- 	<li><a href="#">2.3</a></li> -->
+					<li class="last"><b>New User Registration</b></li>
+				</ul>
+			</div>
+		</div>
+	</div>
+	<div class="row well">
+				<div class="col-md-12 "  oninput="get_input()">
+		
+			<form>
+			
+			<div class="row">
+				<div class="col-md-6">
+					<label>Officer Name</label>
+					<input type="text" class="form-control" placeholder="Enter Officer Name" id="officerName"><br>
+				</div>
+				<div class="col-md-6">
+					<label>Role</label>
+					<input type="text" class="form-control" placeholder="Enter Role" id="Role"><br>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-6">
+					<label>Username</label>
+					<input type="text" class="form-control" placeholder="Enter Username" id="Username"><br>
+					<div id="err_msg" style="display:none">
+						<p style="color:red;"><i class="fa fa-exclamation-circle"></i> This Username Not Available !!!</p>
+					</div>
+				</div>
+				<div class="col-md-6">
+					<label>Department</label>
+					<input type="text" class="form-control" placeholder="Enter Department" id="Department"><br>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-6">
+					<label>Password</label>
+					<input type="text" class="form-control" placeholder="Enter Password" id="Password"><br>
+				</div>
+				<div class="col-md-6">
+					<label>Mobile No</label>
+					<input type="text" class="form-control" placeholder="Enter Mobile No" id="mobileNo"><br>
+				</div>
+			</div>
+				<div style="float:right;">
+					<input type="button" value="Add" class="btn btn-success" id="Add" disabled>&nbsp;&nbsp;&nbsp;&nbsp;
+					<input type="reset" value="Clear" class="btn btn-default" id="Clear">
+				</div>
+			</form>
+		
+	</div>	
+</div>
+	
+		
+
+</div>
+
+
+<script>
+var officer_name="",username="",password="",role="",department="",mobile_number="";
+		function get_input(){
+			officer_name = $("#officerName").val();
+			username = $("#Username").val();
+			password = $("#Password").val();
+			role = $("#Role").val();
+			department = $("#Department").val();
+			mobile_number = $("#mobileNo").val();
+			
+			if(officer_name!=""&&username!=""&&password!=""&&role!=""&&department!=""&&mobile_number){
+				document.getElementById("Add").disabled = false;
+			}else{
+				document.getElementById("Add").disabled = true;
+			}
+		}
+		
+		$(document).ready(function (){
+			$("#Add").click(function(){
+				$.ajax({
+					type : "post",
+					url : path + "/Username_check",
+					async : false,
+					data:{
+						username : username
+					},
+					
+					success : function(data) {	
+						var status = data.trim();
+						if(status=="Unavailable"){
+							$("#err_msg").show();
+							$("#Username").click(function (){
+								$("#err_msg").hide();
+								return false;
+							});
+						}else{
+							$.ajax({
+								type : "post",
+								url : path + "/User_registraion",
+								async : false,
+								data:{
+									officer_name : officer_name,
+									username : username,
+									password: password,
+									role : role,
+									department : department,
+									mobile_number : mobile_number
+								},
+								
+								success : function(data) {	
+									var status = data.trim();
+									if(status=="SUCCESS"){
+										bootbox.alert("User Added",
+										 function(){
+											$("#officerName").val("");
+											$("#Username").val("");
+											$("#Password").val("");
+											$("#Role").val("");
+											$("#Department").val("");
+											$("#mobileNo").val("");
+											
+										}		
+										); 
+									} 				
+								},
+								error : function(xhr, ajaxOptions, thrownError) {
+									bootbox.alert("err"+xhr);
+								},
+								complete : function() {
+										
+								}
+							});
+						return false;
+							
+						}	 				
+					},
+					error : function(xhr, ajaxOptions, thrownError) {
+						bootbox.alert("err"+xhr);
+					},
+					complete : function() {
+							
+					}
+				});
+			return false;
+			});
+			
+			
+			
+		});
+
+		</script>
+
+

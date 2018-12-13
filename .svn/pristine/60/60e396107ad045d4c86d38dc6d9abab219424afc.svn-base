@@ -1,0 +1,203 @@
+<%@ include file="Main.jsp"%>
+<script src="<%=request.getContextPath()%>/js/highchart/highcharts.js"></script>
+<script src="<%=request.getContextPath()%>/js/highchart/drilldown.js"></script>
+<script src="js/datepicker.js"></script>
+<script src="js/bootbox.min.js"></script> 
+
+
+<body class="full_width ptrn_a well" >
+
+<div class="main_content" >
+
+	<div id="jCrumbs" class="breadCrumb module">
+		<div style="overflow: hidden; position: relative; width: 1065px;">
+			<div>
+				<ul style="width: 5006px;">
+					<li class="first"><a href="Dashboard.jsp"><i
+							class="glyphicon glyphicon-home"></i></a></li>
+					<li><a href="#">Report</a></li>
+					<!-- 	<li><a href="#">2.3</a></li> -->
+					<li class="last"><b>Change <%=session_officername%> Password</b></li>
+				</ul>
+			</div>
+		</div>
+	</div>
+	<div class="">
+		<div class="well" style="width:50%; margin-left:25%; margin-top:5%; font-weight:bold;">
+		<form id="check" oninput="get_input()">
+		<div class="" id="old_pw">
+			<label>Current Password</label>
+			<div class="input-group">
+				<input class="form-control " id="o_pw" type="password" />
+				<span class="input-group-addon" id="o_pw_check"><i class="glyphicon glyphicon-circle-arrow-right" style="font-size: 18px;" ></i></span>
+			</div>
+			<div id="err_msg" style="display:none;">
+				<br>
+				<p style="color:red;"><i class="fa fa-exclamation-circle"></i> Incorrect Password !!!</p>
+			</div>
+		</div>
+		<div class="" id="new_pw" style="display:none;">
+			<label>New Password</label> 
+			<div class="input-group">
+				<input class="form-control " id="n_pw" type="password" />
+				<span class="input-group-addon" id="view_btn1"><i class="glyphicon glyphicon-eye-open" style="font-size: 18px;" ></i></span>
+			</div>
+			<br><br>
+			<label>Confirm Password</label> 
+			<div class="input-group">
+				<input class="form-control " id="c_pw" type="password" />
+				<span class="input-group-addon" id="view_btn2"><i class="glyphicon glyphicon-eye-open" style="font-size: 18px;"></i></span>
+			</div>
+			<div id="error_msg" style="display:none;">
+				<br>
+				<p style="color:red;"><i class="fa fa-exclamation-circle"></i> Password Doesn't Match !!!</p>
+			</div>
+			<br>
+			<input class="btn btn-primary btn-block" type="button" id="change_pw" value="Change Password" disabled>
+			<input class="btn btn-default btn-block" type="reset" value="Clear">
+		</div>
+		</form>
+		</div>
+	</div>
+	
+</div>
+</body>
+
+<script type="text/javascript">
+var pw1="",pw2="";
+function get_input(){
+	pw1 = $("#n_pw").val();	
+	pw2 = $("#c_pw").val();	
+	if(pw1!=""&&pw2!=""){
+		document.getElementById("change_pw").disabled = false;
+	}else{
+		document.getElementById("change_pw").disabled = true;	
+	}
+}
+$(document).ready(function () {
+	
+	$("#view_btn1").mousedown(function(){
+		$("#n_pw").attr({
+	        "type" : "text"
+	    });
+	});
+	$("#view_btn1").mouseup(function(){
+		$("#n_pw").attr({
+	        "type" : "password"
+	    });
+	});
+	
+	$("#view_btn2").mousedown(function(){
+		$("#c_pw").attr({
+	        "type" : "text"
+	    });
+	});
+	$("#view_btn2").mouseup(function(){
+		$("#c_pw").attr({
+	        "type" : "password"
+	    });
+	});
+	
+	var id ="",password="";
+	$("#o_pw_check").click(function(){
+		
+		
+		id="<%=session_vid_resouce%>";
+		password =  $('#o_pw').val();
+		$.ajax({
+			type : "post",
+			url : path + "/Current_password_checking",
+			async : false,
+			data:{
+				id : id,
+				password : password
+			},
+			
+			success : function(data) {
+				var t = data.trim();
+				if(t=='matched'){
+					$("#old_pw").hide();
+					$("#new_pw").show();
+					return false;
+				}else{
+					$("#err_msg").show();
+					$("#o_pw").click(function(){
+						$("#o_pw").val("");
+						$("#err_msg").hide();
+						return false;
+					});
+				}		
+			},
+			error : function(xhr, ajaxOptions, thrownError) {
+				bootbox.alert("err"+xhr);
+			},
+			complete : function() {
+					
+			}
+		});
+	return false;
+	});
+
+		
+	
+
+		
+	
+		
+	$("#change_pw").click(function(){
+			
+			if(pw1==pw2){
+				$.ajax({
+					type : "post",
+					url : path + "/User_password_change",
+					async : false,
+					data:{
+						id : id,
+						password : pw2
+					},
+					
+					success : function(data) {
+						var t = data.trim();
+						if(t=='SUCCESS'){
+							bootbox.alert("Password successfully changed",
+							function(){
+								location.replace("Dashboard.jsp");
+							}		
+							);
+						}
+					},
+					error : function(xhr, ajaxOptions, thrownError) {
+						bootbox.alert("err"+xhr);
+					},
+					complete : function() {
+							
+					}
+				});
+			return false;
+			}else{
+				$("#error_msg").show();
+				$("#n_pw").click(function(){
+					$("#error_msg").hide();
+					return false;
+				});
+				$("#c_pw").click(function(){
+					$("#error_msg").hide();
+					return false;
+				});
+			}
+		
+	});
+	
+
+	
+	
+});
+
+$("#o_pw_check").mouseover(function(){ 	
+	$(".glyphicon-circle-arrow-right").css("color", "blue");
+});
+$("#o_pw_check").mouseout(function(){
+	$(".glyphicon-circle-arrow-right").css("color", "#555");
+});
+</script>
+

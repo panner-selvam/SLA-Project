@@ -1,0 +1,536 @@
+<%@ page language="java"
+	import="org.cloudme.sample.aes.AesUtil,java.util.ResourceBundle,java.sql.Statement,java.sql.SQLException,Database.*,java.sql.ResultSet,java.text.DateFormat,java.sql.Connection,java.util.*,java.util.Date,java.text.DecimalFormat,java.text.SimpleDateFormat"%>
+
+
+	<%
+	String ses_cond="",uname="";
+	String Total_downtime="",Total_uptime="";
+String date="",IP="",Location="",UPTime="",DownTime=""; 
+	String query ="";
+	String cond="";
+	String uid=request.getParameter("uid");	
+	String fdate=request.getParameter("fdate");
+		if(!fdate.equalsIgnoreCase("")){
+			cond=cond+" and CAST(CONVERT(char(10),date,126) AS DATE) >= CAST(CONVERT(char(10), '"+fdate+"',126) AS DATE)";
+		}
+		String tdate=request.getParameter("tdate");
+		if(!tdate.equalsIgnoreCase("")){
+			cond=cond+" and CAST(CONVERT(char(10),date,126) AS DATE) <= CAST(CONVERT(char(10), '"+tdate+"',126) AS DATE)";
+		}
+			String sname=""+request.getParameter("sname");
+		
+		String sub_series_list=request.getParameter("sub_series_list");
+		
+		
+		String exportToExcel = request.getParameter("exportToExcel");
+		if (exportToExcel != null
+				&& exportToExcel.toString().equalsIgnoreCase("YES")) {
+			%><div style="color: #3d72b4; font-size: 35px;text-align:center;font-weight:bold;">
+		Mumbai City Surveillance
+		</div><%
+			response.setContentType("application/vnd.ms-excel");
+			response.setHeader("Content-Disposition", "inline; filename=Series_"+sub_series_list+".xls");
+
+		}
+	%>
+	<%
+		if (exportToExcel == null) {
+	%>
+<%@include file="Main.jsp"%>
+	
+<div class="main_content">
+
+	<div id="jCrumbs" class="breadCrumb module">
+		<div style="overflow: hidden; position: relative; width: 1065px;">
+			<div>
+				<ul style="width: 5006px;">
+					<li class="first"><a href="#"><i
+							class="glyphicon glyphicon-home"></i></a></li>
+					<li>Report</a></li>
+					<!-- 	<li><a href="#">2.3</a></li> -->
+					<li ><a href="<%=request.getContextPath()%>/Series.jsp"><b>Common Reporting</b></a></li>
+					<li class="last" id="seriesname"><b><%=sub_series_list%> <%=sname%></b></li>
+
+
+<li class="right" ><b><a
+		href="ExporttoExcel_5.jsp?sname=<%=sname%>&fdate=<%=fdate%>&tdate=<%=tdate%>&sub_series_list=<%=sub_series_list%>&uid=<%=uid%>&exportToExcel=YES" >Export to Excel</a></b></li>
+				</ul>
+			</div>
+		</div>
+	</div>
+	
+<section class="content_b">
+		<div class="row">
+			<div class="col-md-12">
+		
+	<%
+		}
+	Database db = new Database();
+	Connection con = null,con1=null;
+	ResourceBundle resource = ResourceBundle.getBundle("commonvariables");
+
+	String series_name_5_5d=resource.getString("series_name_5_5");
+	String series_name_5_4d=resource.getString("series_name_5_4");
+	String series_name_5_3d=resource.getString("series_name_5_3");
+	String series_name_5_2d=resource.getString("series_name_5_2");
+	String series_name_5_1d=resource.getString("series_name_5_1");
+	con = db.connection_get();
+	con1 = db.connection_get();
+	String Total_Average="";
+if(con1!=null){
+	String uquery="select OfficerName,MobileNo,role from dbo.mastr_user where IsActive=1 and id="+uid+"";
+	
+	ResultSet userrs=db.SelectData(uquery, con1); 
+	System.out.println(">>rs.isBeforeFirst"+userrs.getFetchSize());
+	if(userrs!=null){
+	if(userrs.next()){
+		uname=""+userrs.getString("OfficerName");
+	}
+	}
+}
+	%>
+	<div style="color:#033;font-size:25px;"></div>
+	
+	<%-- <div style="color:darkblue;font-weight:bold;font-size:22px;text-align:center;">Streaming - Status Report(<%=request_status1%>)</div> --%>
+	
+	<%if (exportToExcel != null
+								&& exportToExcel.toString().equalsIgnoreCase("YES")) { %>
+						<div
+			style=" font-weight: bold; font-size: 22px; text-align: center;">
+			
+		</div>	<div style="Font-weight:bold;">Export Date - <%DateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy hh:mm a ");
+			Date date1 = new Date();
+			out.print(dateFormat.format(date1)); %><br>
+			Exported By - <%=uname%>
+			</div>
+		
+						<%} else{ %>
+						<%-- <div
+			style="color: white; font-weight: bold; font-size: 22px; text-align: center;">
+			<%=sname%>
+		</div> --%>
+						<%} %>
+	<br>
+		<div style="overflow-x:scroll;">
+	
+							<%	
+	
+	try {
+				System.out.println("con"+con);
+		if (con != null) {
+			
+		/* 	if(sub_series_list.equalsIgnoreCase(series_name_5_5)) 
+			{									
+		query = "SELECT  * 	FROM   ( SELECT     (select convert(numeric(10,2),( ROUND(SUM( cast (UPTime as Float) ) / COUNT(*), 2)) ) avg  from  TVScreen where  IP='All IPs' )Total_uptime ,(select convert(numeric(10,2),( ROUND(SUM( cast (DownTime as Float) ) / COUNT(*), 2)) ) avg  from  TVScreen where  IP='All IPs' "+cond+" )Total_downtime ,  COUNT(*) OVER() as Rcount, ROW_NUMBER() OVER (ORDER BY rid Desc) AS rownumber,date,IP,Location,UPTime,DownTime	FROM  TVScreen where  IP='All IPs'  "+cond+"	) AS tbl"; 
+			} */
+			
+			if(sub_series_list.equalsIgnoreCase(series_name_5_5d)) 
+			{									
+		query = "SELECT  * 	FROM   ( SELECT     (select convert(numeric(10,2),( ROUND(SUM( cast (UPTime as Float) ) / COUNT(*), 2)) ) avg  from  TVScreen where  IP='All IPs' "+cond+" )Total_uptime ,(select convert(numeric(10,2),( ROUND(SUM( cast (DownTime as Float) ) / COUNT(*), 2)) ) avg  from  TVScreen where  IP='All IPs' "+cond+" )Total_downtime ,  COUNT(*) OVER() as Rcount, ROW_NUMBER() OVER (ORDER BY rid Desc) AS rownumber,date,IP,Location,UPTime,DownTime	FROM  TVScreen where  IP='All IPs'  "+cond+"	) AS tbl 	";
+		
+		       %><table id="labour" class="table -dark -striped -bordered" border="1" style="white-space:nowrap;">
+
+						<thead>
+							<tr>
+								<th class="text-center">Sl.No</th>
+								<th class="text-center">Date</th>
+								<th class="text-center">IP</th>
+								<th class="text-center">Location</th>
+								<th class="text-center">Uptime</th>
+								<th class="text-center">DownTime</th>
+							</tr>
+						</thead>
+						<tbody><%
+			}
+	else	if(sub_series_list.equalsIgnoreCase(series_name_5_4d)) 
+	{									
+query = "SELECT  * 	FROM   ( SELECT     (select convert(numeric(10,2),( ROUND(SUM( cast (UPTime as Float) ) / COUNT(*), 2)) ) avg  from  tbl_5_4 where isnull(id,'')!='' "+cond+" )Total_uptime ,(select convert(numeric(10,2),( ROUND(SUM( cast (DownTime as Float) ) / COUNT(*), 2)) ) avg  from  tbl_5_4 where  isnull(id,'')!='' "+cond+" )Total_downtime ,  COUNT(*) OVER() as Rcount, ROW_NUMBER() OVER (ORDER BY rid Desc) AS rownumber,Ipaddress,Hostname,Region,Zone,Policestation,Uptime,Downtime	FROM  tbl_5_4 where isnull(id,'')!=''  "+cond+"	) AS tbl 	";
+
+
+
+%><table id="labour" class="table -dark -striped -bordered" border="1" style="white-space:nowrap;">
+
+			<thead>
+				<tr><th class="text-center">Sl.No</th><th class="text-center">Date</th><th class="text-center">IP address</th><th class="text-center">Host name</th><th class="text-center">Region</th><th class="text-center">Zone</th><th class="text-center">Police Station</th><th class="text-center">Uptime</th><th class="text-center">DownTime</th> </tr></thead><tbody><%
+
+	}
+	else if(sub_series_list.equalsIgnoreCase(series_name_5_3d)) 
+	{									
+		query = "SELECT  * 	FROM   ( SELECT     (select convert(numeric(10,2),( ROUND(SUM( cast (UPTime as Float) ) / COUNT(*), 2)) ) avg  from  tbl_5_3 where isnull(id,'')!='' "+cond+" )Total_uptime ,(select convert(numeric(10,2),( ROUND(SUM( cast (DownTime as Float) ) / COUNT(*), 2)) ) avg  from  tbl_5_3 where  isnull(id,'')!='' "+cond+" )Total_downtime ,  COUNT(*) OVER() as Rcount, ROW_NUMBER() OVER (ORDER BY rid Desc) AS rownumber,Ipaddress,Hostname,Region,Zone,Policestation,Uptime,Downtime	FROM  tbl_5_3 where isnull(id,'')!=''  "+cond+"	) AS tbl 	";
+
+
+
+		%><table id="labour" class="table -dark -striped -bordered" border="1" style="white-space:nowrap;">
+
+					<thead>
+						<tr><th class="text-center">Sl.No</th><th class="text-center">Date</th><th class="text-center">IP address</th><th class="text-center">Host name</th><th class="text-center">Region</th><th class="text-center">Zone</th><th class="text-center">Police Station</th><th class="text-center">Uptime</th><th class="text-center">DownTime</th> </tr></thead><tbody><%
+
+	}
+	else if(sub_series_list.equalsIgnoreCase(series_name_5_2d)) 
+	{									
+		query = "SELECT  * 	FROM   ( SELECT     (select convert(numeric(10,2),( ROUND(SUM( cast (UPTime as Float) ) / COUNT(*), 2)) ) avg  from  tbl_5_2 where  isnull(id,'')!='' "+cond+")Total_uptime ,(select convert(numeric(10,2),( ROUND(SUM( cast (DownTime as Float) ) / COUNT(*), 2)) ) avg  from  tbl_5_2 where  isnull(id,'')!='' "+cond+" )Total_downtime ,  COUNT(*) OVER() as Rcount, ROW_NUMBER() OVER (ORDER BY rid Desc) AS rownumber,date,IP,Location,UPTime,DownTime	FROM  tbl_5_2 where  isnull(id,'')!=''  "+cond+"	) AS tbl 	";
+		
+		%>
+		<table id="labour" class="table -dark -striped -bordered" border="1" style="white-space:nowrap;">
+
+			<thead>
+			<tr><th class="text-center">Sl.No</th><th class="text-center">Date</th><th class="text-center">Video wall IP</th><th class="text-center">Equipment type</th><th class="text-center">Location</th><th class="text-center">Uptime</th><th class="text-center">DownTime</th> </tr></thead><tbody>
+		<%
+	}
+	else		if(sub_series_list.equalsIgnoreCase(series_name_5_1d)) 
+	{									
+query = "SELECT  * 	FROM   ( SELECT     (select convert(numeric(10,2),( ROUND(SUM( cast (UPTime as Float) ) / COUNT(*), 2)) ) avg  from  tbl_5_1 where  isnull(id,'')!='' "+cond+")Total_uptime ,(select convert(numeric(10,2),( ROUND(SUM( cast (DownTime as Float) ) / COUNT(*), 2)) ) avg  from  tbl_5_1 where   isnull(id,'')!='' "+cond+" )Total_downtime ,  COUNT(*) OVER() as Rcount, ROW_NUMBER() OVER (ORDER BY rid Desc) AS rownumber,date,IP,Location,UPTime,DownTime	FROM  tbl_5_1 where   isnull(id,'')!='' "+cond+"	) AS tbl 	";
+
+%><tr><th class="text-center">Sl.No</th><th class="text-center">Date</th><th class="text-center">IP</th><th class="text-center">Hostname</th><th class="text-center">Location</th><th class="text-center">Uptime</th><th class="text-center">DownTime</th> </tr></thead><tbody><% 
+	}else {
+		
+	}
+	
+	
+	
+			
+			ResultSet rs=db.SelectData(query, con); 
+			System.out.println(">>rs.isBeforeFirst"+rs.getFetchSize());
+						if (!rs.isBeforeFirst()) {
+							System.out.println(">>if");
+			%><tr>
+								<td colspan="6">No Data Found</td>
+							</tr>
+							<%
+				} else {
+							int i = 0;
+							while (rs.next()) {
+								
+								if(sub_series_list.equalsIgnoreCase(series_name_5_5d)) 
+								{			
+								date = "" + rs.getString("date");
+								if(date.equalsIgnoreCase("") || date.equalsIgnoreCase("null") || date.equalsIgnoreCase(null)){
+									date="";
+								}
+								date = date.trim();
+								IP = "" + rs.getString("IP");
+								if(IP.equalsIgnoreCase("") || IP.equalsIgnoreCase("null") || IP.equalsIgnoreCase(null)){
+									IP="";
+								}
+								IP = IP.trim();
+								Location = "" + rs.getString("Location");
+								if(Location.equalsIgnoreCase("") || Location.equalsIgnoreCase("null") || Location.equalsIgnoreCase(null)){
+									Location="";
+								}
+								Location = Location.trim();
+								
+								UPTime = "" + rs.getString("UPTime");
+								if(UPTime.equalsIgnoreCase("") || UPTime.equalsIgnoreCase("null") || UPTime.equalsIgnoreCase(null)){
+									UPTime="";
+								}
+								UPTime = UPTime.trim();
+								DownTime = "" + rs.getString("DownTime");
+								if(DownTime.equalsIgnoreCase("") || DownTime.equalsIgnoreCase("null") || DownTime.equalsIgnoreCase(null)){
+									DownTime="";
+								}
+								DownTime = DownTime.trim();
+								
+								 Total_downtime=""+rs.getString("Total_downtime");
+								 Total_uptime=""+rs.getString("Total_uptime");
+								String rownumber = ""
+										+ rs.getString("rownumber");
+								//System.out.println(">>>>>rownumber"+rownumber);
+								String Rcount = "" + rs.getString("Rcount");
+								//System.out.println(">>>>>Rcount"+Rcount);
+								
+
+			%>
+							<tr>
+								<td style="text-align: center"><%=(i + 1)%></td>
+								<td><%=date%></td>
+								<td><%=IP%></td>
+								<td style='text-align: Center;'><%=Location%></td>
+								<td style='text-align: Center;'><%=UPTime%></td>
+								<td style='text-align: Center;'><%=DownTime%></td>
+							</tr>
+
+
+							<%
+							
+							
+								}//5.5
+								
+								else 	if(sub_series_list.equalsIgnoreCase(series_name_5_4d)) 
+								{
+									date = "" + rs.getString("date");
+									if(date.equalsIgnoreCase("") || date.equalsIgnoreCase("null") || date.equalsIgnoreCase(null)){
+										date="";
+									}
+									date = date.trim();
+										
+									String Region = "" + rs.getString("Region");
+									if(Region.equalsIgnoreCase("") || Region.equalsIgnoreCase("null") || Region.equalsIgnoreCase(null)){
+										Region="";
+									}
+									Region = Region.trim();
+									String Zone = "" + rs.getString("Zone");
+									if(Zone.equalsIgnoreCase("") || Zone.equalsIgnoreCase("null") || Zone.equalsIgnoreCase(null)){
+										Zone="";
+									}
+									Zone = Zone.trim();
+									String Policestation = "" + rs.getString("Policestation");
+									if(Policestation.equalsIgnoreCase("") || Policestation.equalsIgnoreCase("null") || Policestation.equalsIgnoreCase(null)){
+										Policestation="";
+									}
+									Policestation = Policestation.trim();
+									
+									
+									String Ipaddress = "" + rs.getString("Ipaddress");
+									if(Ipaddress.equalsIgnoreCase("") || Ipaddress.equalsIgnoreCase("null") || Ipaddress.equalsIgnoreCase(null)){
+										Ipaddress="";
+									}
+									Ipaddress = Ipaddress.trim();
+								String 	Hostname = "" + rs.getString("Hostname");
+									if(Hostname.equalsIgnoreCase("") || Hostname.equalsIgnoreCase("null") || Hostname.equalsIgnoreCase(null)){
+										Hostname="";
+									}
+									Hostname = Hostname.trim();
+									
+									UPTime = "" + rs.getString("UPTime");
+									if(UPTime.equalsIgnoreCase("") || UPTime.equalsIgnoreCase("null") || UPTime.equalsIgnoreCase(null)){
+										UPTime="";
+									}
+									UPTime = UPTime.trim();
+									DownTime = "" + rs.getString("DownTime");
+									if(DownTime.equalsIgnoreCase("") || DownTime.equalsIgnoreCase("null") || DownTime.equalsIgnoreCase(null)){
+										DownTime="";
+									}
+									DownTime = DownTime.trim();
+									
+									 Total_downtime=""+rs.getString("Total_downtime");
+									 Total_uptime=""+rs.getString("Total_uptime");
+									
+									
+								%>
+
+													<tr>
+														<td style="text-align: center"><%=(i + 1)%></td>
+														<td><%=date%></td>
+														<td><%=Ipaddress%></td>
+														<td style='text-align: Center;'><%=Region%></td>
+														<td style='text-align: Center;'><%=Zone%></td>
+														<td style='text-align: Center;'><%=Policestation%></td>
+														<td style='text-align: Center;'><%=UPTime%></td>
+														<td style='text-align: Center;'><%=DownTime%></td>
+													</tr>
+													<% 
+										}//5.4
+								
+								else 	if(sub_series_list.equalsIgnoreCase(series_name_5_3d)) 
+								{
+									date = "" + rs.getString("date");
+									if(date.equalsIgnoreCase("") || date.equalsIgnoreCase("null") || date.equalsIgnoreCase(null)){
+										date="";
+									}
+									date = date.trim();
+										
+									String Region = "" + rs.getString("Region");
+									if(Region.equalsIgnoreCase("") || Region.equalsIgnoreCase("null") || Region.equalsIgnoreCase(null)){
+										Region="";
+									}
+									Region = Region.trim();
+									String Zone = "" + rs.getString("Zone");
+									if(Zone.equalsIgnoreCase("") || Zone.equalsIgnoreCase("null") || Zone.equalsIgnoreCase(null)){
+										Zone="";
+									}
+									Zone = Zone.trim();
+									String Policestation = "" + rs.getString("Policestation");
+									if(Policestation.equalsIgnoreCase("") || Policestation.equalsIgnoreCase("null") || Policestation.equalsIgnoreCase(null)){
+										Policestation="";
+									}
+									Policestation = Policestation.trim();
+									
+									
+									String Ipaddress = "" + rs.getString("Ipaddress");
+									if(Ipaddress.equalsIgnoreCase("") || Ipaddress.equalsIgnoreCase("null") || Ipaddress.equalsIgnoreCase(null)){
+										Ipaddress="";
+									}
+									Ipaddress = Ipaddress.trim();
+								String 	Hostname = "" + rs.getString("Hostname");
+									if(Hostname.equalsIgnoreCase("") || Hostname.equalsIgnoreCase("null") || Hostname.equalsIgnoreCase(null)){
+										Hostname="";
+									}
+									Hostname = Hostname.trim();
+									
+									UPTime = "" + rs.getString("UPTime");
+									if(UPTime.equalsIgnoreCase("") || UPTime.equalsIgnoreCase("null") || UPTime.equalsIgnoreCase(null)){
+										UPTime="";
+									}
+									UPTime = UPTime.trim();
+									DownTime = "" + rs.getString("DownTime");
+									if(DownTime.equalsIgnoreCase("") || DownTime.equalsIgnoreCase("null") || DownTime.equalsIgnoreCase(null)){
+										DownTime="";
+									}
+									DownTime = DownTime.trim();
+									
+									 Total_downtime=""+rs.getString("Total_downtime");
+									 Total_uptime=""+rs.getString("Total_uptime");
+									
+									
+								%>
+
+													<tr>
+														<td style="text-align: center"><%=(i + 1)%></td>
+														<td><%=date%></td>
+														<td><%=Ipaddress%></td>
+														<td style='text-align: Center;'><%=Region%></td>
+														<td style='text-align: Center;'><%=Zone%></td>
+														<td style='text-align: Center;'><%=Policestation%></td>
+														<td style='text-align: Center;'><%=UPTime%></td>
+														<td style='text-align: Center;'><%=DownTime%></td>
+													</tr>
+													<% 
+										}//5.3
+																
+								else 	if(sub_series_list.equalsIgnoreCase(series_name_5_2d)) 
+								{
+									date = "" + rs.getString("date");
+									if(date.equalsIgnoreCase("") || date.equalsIgnoreCase("null") || date.equalsIgnoreCase(null)){
+										date="";
+									}
+									date = date.trim();
+									
+									
+									
+									String Video_wall_ip = "" + rs.getString("Video_wall_ip");
+									if(Video_wall_ip.equalsIgnoreCase("") || Video_wall_ip.equalsIgnoreCase("null") || Video_wall_ip.equalsIgnoreCase(null)){
+										Video_wall_ip="";
+									}
+									Video_wall_ip = Video_wall_ip.trim();
+									String Equipment_type = "" + rs.getString("Equipment_type");
+									if(Equipment_type.equalsIgnoreCase("") ||Equipment_type.equalsIgnoreCase("null") || Equipment_type.equalsIgnoreCase(null)){
+										Equipment_type="";
+									}
+									Equipment_type = Equipment_type.trim();
+									 Location = "" + rs.getString("Location");
+									if(Location.equalsIgnoreCase("") || Location.equalsIgnoreCase("null") || Location.equalsIgnoreCase(null)){
+										Location="";
+									}
+									Location = Location.trim();
+									
+									UPTime = "" + rs.getString("UPTime");
+									if(UPTime.equalsIgnoreCase("") || UPTime.equalsIgnoreCase("null") || UPTime.equalsIgnoreCase(null)){
+										UPTime="";
+									}
+									UPTime = UPTime.trim();
+									DownTime = "" + rs.getString("DownTime");
+									if(DownTime.equalsIgnoreCase("") || DownTime.equalsIgnoreCase("null") || DownTime.equalsIgnoreCase(null)){
+										DownTime="";
+									}
+									DownTime = DownTime.trim();
+									
+									 Total_downtime=""+rs.getString("Total_downtime");
+									 Total_uptime=""+rs.getString("Total_uptime");
+																	
+								%>
+									<tr>
+													<td style="text-align: center"><%=(i + 1)%></td>
+														<td><%=date%></td>
+														<td><%=Video_wall_ip%></td>
+														<td style='text-align: Center;'><%=Equipment_type%></td>
+														<td style='text-align: Center;'><%=Location%></td>
+														<td style='text-align: Center;'><%=UPTime%></td>
+														<td style='text-align: Center;'><%=DownTime%></td>
+													</tr>
+													<%
+														}//5.2
+																			
+																			else 	if(sub_series_list.equalsIgnoreCase(series_name_5_1d)) 
+																			{
+																				date = "" + rs.getString("date");
+																				if(date.equalsIgnoreCase("") || date.equalsIgnoreCase("null") || date.equalsIgnoreCase(null)){
+																					date="";
+																				}
+																				date = date.trim();
+																				String IPaddress = "" + rs.getString("IPaddress");
+																				if(IPaddress.equalsIgnoreCase("") || IPaddress.equalsIgnoreCase("null") || IPaddress.equalsIgnoreCase(null)){
+																					IPaddress="";
+																				}
+																				IPaddress = IPaddress.trim();
+																				String Hostname = "" + rs.getString("Hostname");
+																				if(Hostname.equalsIgnoreCase("") ||Hostname.equalsIgnoreCase("null") || Hostname.equalsIgnoreCase(null)){
+																					Hostname="";
+																				}
+																				Hostname = Hostname.trim();
+																				 Location = "" + rs.getString("Location");
+																				if(Location.equalsIgnoreCase("") || Location.equalsIgnoreCase("null") || Location.equalsIgnoreCase(null)){
+																					Location="";
+																				}
+																				Location = Location.trim();
+																				
+																				UPTime = "" + rs.getString("UPTime");
+																				if(UPTime.equalsIgnoreCase("") || UPTime.equalsIgnoreCase("null") || UPTime.equalsIgnoreCase(null)){
+																					UPTime="";
+																				}
+																				UPTime = UPTime.trim();
+																				DownTime = "" + rs.getString("DownTime");
+																				if(DownTime.equalsIgnoreCase("") || DownTime.equalsIgnoreCase("null") || DownTime.equalsIgnoreCase(null)){
+																					DownTime="";
+																				}
+																				DownTime = DownTime.trim();
+																				
+																				 Total_downtime=""+rs.getString("Total_downtime");
+																				 Total_uptime=""+rs.getString("Total_uptime");
+													%><tr>
+														<td style="text-align: center"><%=(i + 1)%></td>
+														<td><%=date%></td>
+														<td><%=IPaddress%></td>
+														<td style='text-align: Center;'><%=Hostname%></td>
+														<td style='text-align: Center;'><%=Location%></td>
+														<td style='text-align: Center;'><%=UPTime%></td>
+														<td style='text-align: Center;'><%=DownTime%></td>
+													</tr><% 
+								}
+								
+								
+								
+			i++;
+								}
+								
+							}
+
+						}
+
+	}
+					
+				 catch (Exception e) {
+
+				}
+			%>
+
+
+
+						</tbody>
+						
+						
+				<%-- 	<tfoot>            <tr>                <th colspan='4' style='text-align:right'>Average:</th>                 <th id='upavg' style='text-align:center;font-weight:bold;'><%=Total_uptime%></th>  <th id='downavg' style='text-align:center;font-weight:bold;'><%=Total_downtime%></th>            </tr>        </tfoot> --%>
+					
+					<%if(sub_series_list.equalsIgnoreCase(series_name_5_5d)){
+				 %>
+				<tfoot>            <tr>                <th colspan='4' style='text-align:right'>Average:</th>                 <th id='upavg' style='text-align:center;font-weight:bold;'><%=Total_uptime%></th>  <th id='downavg' style='text-align:center;font-weight:bold;'><%=Total_downtime%></th>            </tr>        </tfoot>
+				
+				<% }%>
+				<% if(sub_series_list.equalsIgnoreCase(series_name_5_4d)){
+				 %>
+					 <tfoot>            <tr>                <th colspan='6' style='text-align:right'>Average:</th>                 <th id='upavg' style='text-align:center;font-weight:bold;'><%=Total_uptime%></th>  <th id='downavg' style='text-align:center;font-weight:bold;'><%=Total_downtime%></th>            </tr>        </tfoot>
+						<% }%>
+			<% if(sub_series_list.equalsIgnoreCase(series_name_5_3d)){
+				 %>
+					 <tfoot>            <tr>                <th colspan='6' style='text-align:right'>Average:</th>                 <th id='upavg' style='text-align:center;font-weight:bold;'><%=Total_uptime%></th>  <th id='downavg' style='text-align:center;font-weight:bold;'><%=Total_downtime%></th>            </tr>        </tfoot>
+					<% }%>
+				<%if(sub_series_list.equalsIgnoreCase(series_name_5_2d)){
+				 %>
+					 <tfoot>            <tr>                <th colspan='5' style='text-align:right'>Average:</th>                 <th id='upavg' style='text-align:center;font-weight:bold;'><%=Total_uptime%></th>  <th id='downavg' style='text-align:center;font-weight:bold;'><%=Total_downtime%></th>            </tr>        </tfoot>
+						<% }%>
+			<%if(sub_series_list.equalsIgnoreCase(series_name_5_1d)){
+				 %>
+					<tfoot>            <tr>                <th colspan='5' style='text-align:right'>Average:</th>                 <th id='upavg' style='text-align:center;font-weight:bold;'><%=Total_uptime%></th>  <th id='downavg' style='text-align:center;font-weight:bold;'><%=Total_downtime%></th>            </tr>        </tfoot>
+						<% }%>
+	</table>
+</div>
+<div style="margin-bottom:50%;"></div>

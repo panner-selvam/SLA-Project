@@ -1,0 +1,38 @@
+/* series table list */
+#series_list {  
+	background-color: transparant;
+    width: 100%;
+    overflow: auto;
+    margin-left: 0px;
+        
+} 
+
+.table-striped{
+	background-color : #ededed;
+}
+.table-hover>tbody>tr:hover
+{
+	background-color:#adadad;
+}
+.table{
+	border-radius : 3px;
+}
+
+
+
+.ui-datepicker-calendar {
+    display: none;
+}
+.datepicker-months{
+	width : 215px;
+	height :228px;
+}
+.datepicker-years{
+	width : 225px;
+	height :228px;
+}
+.sticky {
+  position: fixed;
+  top: 0;
+  width: 100%;
+}

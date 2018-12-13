@@ -1,0 +1,346 @@
+<%@ include file="Main.jsp"%>
+<script src="<%=request.getContextPath()%>/js/highchart/highcharts.js"></script>
+<script src="js/datepicker.js"></script>
+<script src="js/bootbox.min.js"></script>  
+<style>
+.ui-datepicker-calendar {
+    display: none;
+
+}
+.datepicker-months{
+	width : 215px;
+	height :228px;
+}
+.datepicker-years{
+	width : 225px;
+	height :228px;
+}
+</style>
+<div class="main_content">
+
+	<div id="jCrumbs" class="breadCrumb module">
+		<div style="overflow: hidden; position: relative; width: 1065px;">
+			<div>
+				<ul style="width: 500px;">
+					<li class="first"><a href="#"><i
+							class="glyphicon glyphicon-home"></i></a></li>
+					<li><a href="#">Report</a></li>
+					<!-- 	<li><a href="#">2.3</a></li> -->
+					<li class="last"><b>SLA Monthly Report</b></li>
+				</ul>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+			<div class="col-md-12">
+				<div class="w-box" id="w_sort01">
+					<div class="w-box-header">Series</div>
+					<div class="w-box-content cnt_a">
+						
+						<div class="col-sm-3" style="padding-right: 0px">
+
+							<label>From</label>
+							<div class="input-group" data-date-format="dd/mm/yyyy">
+							<span class="input-group-addon"><i class="splashy-calendar_day"></i></span>
+							<input  class="form-control" type="text"  id="mpick" style="background-color:white" readonly />
+							</div>
+						</div>
+						
+						
+						<div class="clearfix">
+							<div class="col-sm-6  mt-1">
+								<!--   <a href="#" class="btn btn-gebo pull-right btn-default">Send</a></div> -->
+								
+								<button class="btn btn-primary mr-1" value="Search" id="search"
+									onClick="getsearch('search');">Search</button>
+								
+								<button class="btn btn-warning mr-1  " value="Clear" id="clear"
+									onClick="getsearch('refresh');">Refresh</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			</div>
+	<div id="container" style="min-width: 310px; height: 400px; max-width: 1200px; margin: 0 auto"></div>
+		</div>
+		
+		<script>
+		var Myear="Select month",year='',month=''; 
+		var fdate='',ldate='';
+		
+		$(document).ready(function () {
+             
+            $('#mpick').datepicker({
+                minViewMode: 'months',
+                autoclose: true,
+                 format: 'mm/yyyy',
+                 endDate: "today"
+            });  
+            $('#mpick').datepicker().datepicker('setDate', '0m');
+            dateSplit();
+            thisMonth();
+		});
+		
+		$("#mpick").change(function(){
+		 	dateSplit();
+    	});
+		
+		function dateSplit() {
+            Myear = $("#mpick").val(); 
+	    	year = Myear.slice(3,7);
+	    	month = Myear.slice(0,2);
+	    	
+	    	var nowdate = new Date();
+			var monthStartDay = new Date(year, month-1, 1);
+            var monthEndDay = new Date(year,month, 0);
+            
+            var startyear = monthStartDay.getFullYear();
+            var startmonth = monthStartDay.getMonth()+1;
+            var startdate = monthStartDay.getDate();
+            var enddate = monthEndDay.getDate();
+            
+            if((startmonth!='10')&&(startmonth!='11')&&(startmonth!='12')){
+            	startmonth = '0' + startmonth;
+            }
+            startdate = '0' + startdate;
+            
+            fdate = startmonth +"/"+ startdate +"/"+ startyear;
+            ldate = startmonth +"/"+ enddate +"/"+ startyear;
+            
+        }
+		
+		
+		
+		function getsearch(val){
+			if(val=="search"){
+	            ajaxCall();
+	                
+			}
+			else if(val=="refresh"){
+				location.reload(true);
+			}
+		}
+		
+		
+		function thisMonth(){
+			ajaxCall();	
+		}
+		
+		function ajaxCall(){
+			$.ajax({
+				type : "post",
+				url : path + "/Fetching_drilldown_chart_value",
+				async : false,
+				data:{startDate:fdate,endDate:ldate},
+				success : function(data) { 
+					var obj = JSON.parse(data);
+					if(obj!=null){
+						drawchart(obj);
+					}
+					else{
+						bootbox.alert("No Records for this Month");
+					}				
+				},
+					error : function(xhr, ajaxOptions, thrownError) {
+						bootbox.alert("err"+xhr);},
+					complete : function() {
+						
+					}
+			});
+			return false;
+		}
+		
+		
+		function drawchart(obj){
+			if(obj!=null){
+				var module=[],mpoints=[],series_1=[],series_2=[],series_3=[],series_4=[],series_5=[];
+				var point_1=[],point_2=[],point_3=[],point_4=[],point_5=[];
+				
+				$.each(obj,function(key,data){
+					if(data.module_no=='1'){					
+						$.each(data.series_list,function(key,data){
+							series_1.push(data.series_no);
+							point_1.push(parseFloat(data.series_point));
+						});
+					}
+					if(data.module_no=='2'){					
+						$.each(data.series_list,function(key,data){
+							series_2.push(data.series_no);
+							point_2.push(parseFloat(data.series_point));
+						});
+					}if(data.module_no=='3'){					
+						$.each(data.series_list,function(key,data){
+							series_3.push(data.series_no);
+							point_3.push(parseFloat(data.series_point));
+						});
+					}if(data.module_no=='4'){					
+						$.each(data.series_list,function(key,data){
+							series_4.push(data.series_no);
+							point_4.push(parseFloat(data.series_point));
+						});
+					}if(data.module_no=='5'){					
+						$.each(data.series_list,function(key,data){
+							series_5.push(data.series_no);
+							point_5.push(parseFloat(data.series_point));
+						});
+					}
+				});
+				$.each(obj,function(key, data){
+					module.push(data.module_name);
+					mpoints.push(parseInt(data.series_total));
+				});					
+			}
+				
+
+			var colors = Highcharts.getOptions().colors,
+			    categories = module,
+			    data = [
+			        {
+			            "y":mpoints[0],
+			            "color": colors[2],
+			            "drilldown": {
+			                "name": module[0],
+			                "categories": series_1,
+			                "data": point_1
+			            }
+			        },
+			        {
+			            "y": mpoints[1],
+			            "color": colors[1],
+			            "drilldown": {
+			                "name":module[1],
+			                "categories": series_2,
+			                "data": point_2
+			            }
+			        },
+			        {
+			            "y":mpoints[2],
+			            "color": colors[0],
+			            "drilldown": {
+			                "name":module[2],
+			                "categories": series_3,
+			                "data": point_3
+			            }
+			        },
+			        {
+			            "y": mpoints[3],
+			            "color": colors[3],
+			            "drilldown": {
+			                "name":module[3],
+			                "categories": series_4,
+			                "data": point_4
+			            }
+			        },
+			        {
+			            "y": mpoints[4],
+			            "color": colors[5],
+			            "drilldown": {
+			                "name": module[4],
+			                "categories": series_5,
+			                "data": point_5
+			            }
+			        },
+			        
+			    ],
+			    browserData = [],
+			    versionsData = [],
+			    i,
+			    j,
+			    dataLen = data.length,
+			    drillDataLen,
+			    brightness;
+
+
+			// Build the data arrays
+			for (i = 0; i < dataLen; i += 1) {
+
+			    // add browser data
+			    browserData.push({
+			        name: categories[i],
+			        y: data[i].y,
+			        color: data[i].color
+			    });
+
+			    // add version data
+			    drillDataLen = data[i].drilldown.data.length;
+			    for (j = 0; j < drillDataLen; j += 1) {
+			        brightness = (0.2 - ((j / drillDataLen) / 5));
+			        versionsData.push({
+			          name: data[i].drilldown.categories[j],
+			          y: data[i].drilldown.data[j],
+			          color: Highcharts.Color(data[i].color).brighten(brightness).get()
+			        });
+			      }
+			}
+
+			// Create the chart
+			Highcharts.chart('container', {
+			    chart: {
+			        type: 'pie'
+			    },
+			    title: {
+			        text: 'Month wise Series Details'
+			    },
+			    subtitle: {
+			        text: 'Source: SLA'
+			    },
+			    yAxis: {
+			        title: {
+			            text: 'Total percent market share'
+			        }
+			    },
+			    plotOptions: {
+			        pie: {
+			            shadow: false,
+			            center: ['50%', '50%']
+			        }
+			    },
+			    tooltip: {
+			        valueSuffix: 'pts'
+			    },
+			    series: [{
+			        name: 'Main Modules',
+			        data: browserData,
+			        size: '60%',
+			        dataLabels: {
+			            formatter: function () {
+			                return this.y > 5 ? this.point.name :null;
+			            },
+			            color: '#ffffff',
+			            distance: -30
+			        }
+			    }, {
+			        name: 'Versions',
+			        data: versionsData,
+			        size: '80%',
+			        innerSize: '60%',
+			        dataLabels: {
+			            formatter: function () {
+			                // display only if larger than 1
+			                return this.y > 0 ? '<b>' + this.point.name + ': </b> ' +
+			                    this.y: null;
+			            }
+			        },
+			        id: 'versions'
+			    }],
+			    responsive: {
+			        rules: [{
+			            condition: {
+			                maxWidth: 400
+			            },
+			            chartOptions: {
+			                series: [{
+			                    id: 'versions',
+			                    dataLabels: {
+			                        enabled: false
+			                    }
+			                }]
+			            }
+			        }]
+			    }
+			});
+		}
+		
+
+	</script>
