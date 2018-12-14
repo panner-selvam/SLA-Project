@@ -11,6 +11,6 @@
 		<li style="float:right">Sep</li>
 		<li style="float:right">Oct</li>
 		<li style="float:right">Nov</li>
-		<li style="float:right">Dec</li>
+		<li style="float:right">Dec</li> 
 	</ul>
 </div>
