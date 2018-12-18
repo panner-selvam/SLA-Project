@@ -1,6 +1,5 @@
 ﻿<!-- Catch Control -->
 <% response.setHeader("Cache-Control", "no-cache"); response.setHeader("Cache-Control", "no-store"); response.setHeader("Pragma", "no-cache"); response.setDateHeader("Expires", 0);  %>
-
 <%@ page language="java" import="java.util.ResourceBundle"%>
 <!DOCTYPE html>
 <html>
@@ -167,7 +166,9 @@ String iv =  resource.getString("iv");
 		session_vid_resouce=session.getAttribute("session_vid").toString();
 		session_officername=session.getAttribute("session_officername").toString();
 		session_mobileno=session.getAttribute("session_mobileno").toString();		
-		session_Role= session.getAttribute("session_Role").toString();
+		session_Role= session.getAttribute("session_Role").toString(); 
+	
+		
 		 
 	} catch (Exception e) {
 		session_vid_resouce = "NO";
@@ -234,7 +235,23 @@ $(function(){var a=[path+"/lib/validation/jquery.validate.js",path+"/js/aes.js",
 
 									<li><a href="#">1 Series<b class="caret-right"></b></a>
 										<ul class="dropdown-menu">
-											<li><a href="#">1.8</a></li>
+											<li><a href="#">1.1<b class="caret-right"></b></a>
+												<ul class="dropdown-menu">
+													<li><a href="#">1.1 (a)</a></li>													
+													<li><a href="#">1.1 (b)</a></li>
+												</ul>
+											</li>
+											<li><a href="#">1.2</a></li>
+											<li><a href="#">1.3</a></li>
+											<li><a href="#">1.4</a></li>
+											<li><a href="#">1.5</a></li>
+											<li><a href="#">1.6</a></li>
+											<li><a href="#">1.7</a></li>
+											<li><a href="series_1.8.jsp">1.8</a></li>
+											<li><a href="#">1.9</a></li>
+											<li><a href="#">1.10</a></li>
+											<li><a href="#">1.11</a></li>
+											<li><a href="#">1.12</a></li>
 										</ul></li>
 									<li><a href="#">2 Series<b class="caret-right"></b></a>
 										<ul class="dropdown-menu">
@@ -350,15 +367,21 @@ $(function(){var a=[path+"/lib/validation/jquery.validate.js",path+"/js/aes.js",
 
 
 								</ul></li>
-								<li class="dropdown"><a data-toggle="dropdown"
-								class="dropdown-toggle" href="#"><span
-									class="fa fa-users "></span> Users <b
-									class="caret"></b></a>
-								<ul class="dropdown-menu">
-									<li><a href="user_reg.jsp">User Registration</a></li>
-									<li><a href="users.jsp">User Details</a></li>
+								<% 
+									if(session_Role.equals("Admin") || session_Role.equals("Super Admin")){ %>
+										<li class="dropdown"><a data-toggle="dropdown"
+												class="dropdown-toggle" href="#"><span
+													class="fa fa-users "></span> Users <b
+													class="caret"></b></a>
+												<ul class="dropdown-menu">
+													<li><a href="user_reg.jsp">User Registration</a></li>
+													<li><a href="users.jsp">User Details</a></li>
+												
+												</ul></li>
+									
+									<%} %>	
+							
 								
-								</ul></li>
 						</ul>
 						<ul class="nav navbar-nav user_menu pull-right">
 							<li class="dropdown"><a href="#" class="dropdown-toggle"

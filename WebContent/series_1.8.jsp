@@ -114,43 +114,8 @@ th { white-space: nowrap; }
 	</section>
 
 	<script type="text/javascript">
-	function getrefresh(){
-		location.reload();
-	}
 	
-	function getexlview_ins(){
-		//	alert("hi");
-			var number = getUrlVars()["req"];
-var o = "<%=itcnt%>";
-var j = "<%=ksize%>";
-var  m = "<%=iv%>";
-var l = "<%=salt%>";			
-var k = new AesUtil(j, o);	
-var result = k.decrypt(l, m, "data", number);			
-var id=result;
-if(id!="No"){
-	var sid ="",sno="",sname="";
-	var fields = id.split(/~/);
-	
-	 sno = fields[0];
-	 sname = fields[1];
-	
-if (typeof sno != 'undefined'){
-		$("#seriesname").html(sno+" "+sname);
-}else{
-	$("#seriesname").html("");
-}	
-var series_list="";
-		var sub_series_list=sno;
-var dp_start=$("#dp_start").val();
-var dp_end=$("#dp_end").val();
-		<%-- 	var excel = path+'/ExporttoExcel_2.jsp?uid=<%=session_vid_resouce%>&fdate='+dp_start+'&tdate='+dp_end+'&sub_series_list='+sub_series_list+'&sname='+sname+'&exportToExcel=YES'; --%>
-		var excel = path+'/ExporttoExcel_1.jsp?uid=<%=session_vid_resouce%>&fdate='+dp_start+'&tdate='+dp_end+'&sub_series_list='+sub_series_list+'&sname='+sname;
-		
-			
-		document.location.href=excel;
-}
-			}
+
 	
 		var jq = jQuery.noConflict(true);
 	function getsubseriesinfo(){
@@ -185,22 +150,8 @@ var dp_end=$("#dp_end").val();
 	return false;
 
 	}
-	function getUrlVars() {
-	    var vars = {};
-	    var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
-	        vars[key] = value;
-	    });
-	    return vars;
-	}
-	//List of Reports
-	//getsearch();
-	
-		$(document).ready(function () {
-     				
-	 
-					   // getsearch('1');    
-				 
-			});
+
+
 			var vahan_pageIndex="1",vahan_totrecord="0",vahan_rowrecord="0";
 			function getrecords(id){
 				//alert(id);
@@ -235,16 +186,50 @@ var dp_end=$("#dp_end").val();
 				}
 				}
 	
-	
-	function getsearch(vahan_pageIndex) {
+			var flag = 0;
+			var id = "";
+			$(document).ready(function($){
+			//	getserieslist();
+			
+				var currentDate = new Date();			
+				$('#dp_start').datepicker({
+					maxDate : 0,
+					dateFormat : 'mm/dd/yy',
+					changeMonth : true,
+					changeYear : true,
+					currentyear : true,
+					onSelect : function(selected) {
+						$("#dp_end").datepicker("option", "minDate", selected)
+					}
+				});
+				$('#dp_end').datepicker({
+					maxDate : 0,
+					dateFormat : 'mm/dd/yy',
+					changeMonth : true,
+					changeYear : true,
+					currentyear : true,
+					onSelect : function(selected) {
+						$("#dp_start").datepicker("option", "maxDate", selected)
+					}
+				});
+				$("#dp_start").datepicker("setDate", currentDate);
+				$("#dp_end").datepicker("setDate", currentDate);
+				$("#btnclear").click(function() {
+					var currentDate = new Date();
+					$("#dp_start").datepicker("setDate", currentDate);
+					$("#dp_end").datepicker("setDate", currentDate);
+					loaddata();
+				});		
+			});	
+ 	function getsearch(vahan_pageIndex) {
 		
-			  	var number = getUrlVars()["req"];	
+			  	var number = getUrlVars()["req"];		
 		var o = "<%=itcnt%>";
 		var j = "<%=ksize%>";
 		var  m = "<%=iv%>";
 		var l = "<%=salt%>";			
 		var k = new AesUtil(j, o);	
-		var result = k.decrypt(l, m, "data", number);	
+		var result = k.decrypt(l, m, "data", number);			
 		var id=result;
 		if(id!="No"){
 			var sid ="",sno="",sname="";
@@ -473,7 +458,7 @@ $.ajax({
 }
 	
 	
-		var flag = 0;
+ 	<%--var flag = 0;
 		var id = "";
 		$(document).ready(function($){
 		//	getserieslist();
@@ -532,7 +517,7 @@ function getserieslist() {
 				    }
 			});
 		return false;
-	}
+	} --%>
 						
 	</script>
 

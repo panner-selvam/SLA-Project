@@ -6,7 +6,6 @@
 	background-color : white;
 	color : black;
 	margin-left:20px;
-	width : 12%;
 }
 #showAll:focus,#superAdmin:focus,#Admin:focus,#User:focus{
     background: #0083bb;
@@ -41,7 +40,7 @@
 					</div>
 				</div>
 				<div class="row" class="input-group">
-					<button class="btn btn-primary" id="showAll"><i class="fa fa-users" aria-hidden="true"></i> Show All</button>
+					<button class="btn btn-primary " id="showAll"><i class="fa fa-users" aria-hidden="true"></i> Show All</button>					
 					<button class="btn btn-primary"  id="superAdmin"><i class="glyphicon glyphicon-user"></i> Super Admin</button>
 					<button class="btn btn-primary" id="Admin"><i class="splashy-contact_blue"></i> Admin</button>
 					<button class="btn btn-primary" id="User"><i class="splashy-contact_grey"></i> User</button>

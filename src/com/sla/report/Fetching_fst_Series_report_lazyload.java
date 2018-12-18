@@ -79,6 +79,12 @@ public class Fetching_fst_Series_report_lazyload extends HttpServlet {
 		String series_list=""+request.getParameter("series_list");
 		String dp_start=""+request.getParameter("dp_start");
 		String dp_end=""+request.getParameter("dp_end");
+		
+		System.out.println("sub_series_list :"+sub_series_list);
+		System.out.println("series_list :"+series_list);
+		System.out.println("dp_start :"+dp_start);
+		System.out.println("dp_end :"+dp_end);
+		
 	
 		int pagecnt = 50;
 		System.out.println("pagecnt>>>>>>>>>>>" + pagecnt);
@@ -133,15 +139,11 @@ public class Fetching_fst_Series_report_lazyload extends HttpServlet {
 					}
 			}
 			if(!sub_series_list.equalsIgnoreCase("null") && !sub_series_list.equalsIgnoreCase("")&& !sub_series_list.equalsIgnoreCase("select")){		
-				
-				
-				
 			} 
-if(!series_list.equalsIgnoreCase("null") && !series_list.equalsIgnoreCase("")&& !series_list.equalsIgnoreCase("select")){		
-				
+			if(!series_list.equalsIgnoreCase("null") && !series_list.equalsIgnoreCase("")&& !series_list.equalsIgnoreCase("select")){		
 			} 
 	
-System.out.println("tablename"+tablename);
+			System.out.println("tablename"+tablename);
 		
 		String query ="";
 		String Totuniquecamcnt="",Total_online_camcnt="",Total_offline_ccnt="",Total_ratio_ccnt="",datedt="" ,
@@ -666,6 +668,7 @@ System.out.println("tablename"+tablename);
 						obj.put("rownumber", rownumber);
 						arr.put(obj);
 					}
+					
 					
 				}else {
 					System.out.println("No data");

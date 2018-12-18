@@ -108,13 +108,16 @@ $.ajax({
 function getsubseriesfw(id,name){
 		
 	var seriestfltr = id.charAt(0);
+	
 		var o = "<%=itcnt%>";
 		var j = "<%=ksize%>";
 		var  m = "<%=iv%>";
 		var l = "<%=salt%>";			
 		var k = new AesUtil(j, o); 
 		var req = id+"~"+name;
+	
 		var req = k.encrypt(l, m, "data", req);
+		
 	//	alert(req);
 		//alert(k.decrypt(l, m, "data", req) );
 		

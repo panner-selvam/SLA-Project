@@ -120,7 +120,7 @@ th { white-space: nowrap; }
 	
 	function getexlview_ins(){
 		//	alert("hi");
-			var number = getUrlVars()["req"];
+			var number = getUrlVars()["req"];		
 var o = "<%=itcnt%>";
 var j = "<%=ksize%>";
 var  m = "<%=iv%>";
@@ -238,13 +238,13 @@ var dp_end=$("#dp_end").val();
 	
 	function getsearch(vahan_pageIndex) {
 		
-			  	var number = getUrlVars()["req"];	
+			  	var number = getUrlVars()["req"];		
 		var o = "<%=itcnt%>";
 		var j = "<%=ksize%>";
 		var  m = "<%=iv%>";
 		var l = "<%=salt%>";			
 		var k = new AesUtil(j, o);	
-		var result = k.decrypt(l, m, "data", number);	
+		var result = k.decrypt(l, m, "data", number);			
 		var id=result;
 		if(id!="No"){
 			var sid ="",sno="",sname="";
