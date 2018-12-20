@@ -1,7 +1,7 @@
 <%@ include file="Main.jsp"%>
-<script src="<%=request.getContextPath()%>/js/AesUtil.js"></script>
+<%-- <script src="<%=request.getContextPath()%>/js/AesUtil.js"></script>
 <script src="<%=request.getContextPath()%>/js/pbkdf2.js"></script>
-<script src="<%=request.getContextPath()%>/js/aes.js"></script>
+<script src="<%=request.getContextPath()%>/js/aes.js"></script> --%>
 <script src="<%=request.getContextPath()%>/js/jquery-1.11.3.min.js"></script>
     <!-- <script src="http://code.jquery.com/jquery-1.11.3.min.js"></script> -->
 <style>
@@ -12,23 +12,24 @@ th { white-space: nowrap; }
 <!-- <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script> -->
 
 <div class="main_content">
-	<div class="breadCrumb module">
+	<!-- <div class="breadCrumb module">
 		<ul class="text-center">
 			<li style="color: #0083bb;"><h4>
 					<b>Common Reporting</b>
 				</h4></li>
 		</ul>
-	</div>
+	</div> -->
 	<div id="jCrumbs" class="breadCrumb module">
 		<div style="overflow: hidden; position: relative; width: 1065px;">
 			<div>
 				<ul style="width: 5006px;">
 					<li class="first"><a href="#"><i
 							class="glyphicon glyphicon-home"></i></a></li>
-					<li>Report</a></li>
+					<li><a href="#">Modules</a></li>
 					<!-- 	<li><a href="#">2.3</a></li> -->
-					<li ><a href="<%=request.getContextPath()%>/Series.jsp"><b>Common Reporting</b></a></li>
-					<li class="last" id="seriesname"><b></b></li>
+					<li><b><%=series_name_1_12 +" ~ "+series_main_module_name_1 %></b></li>
+					<%-- <li ><a href="<%=request.getContextPath()%>/Series.jsp"><b>Common Reporting</b></a></li> 
+					<li class="last" id="seriesname"><b></b></li>--%>
 				</ul>
 			</div>
 		</div>
@@ -37,11 +38,16 @@ th { white-space: nowrap; }
 		<div class="row">
 			<div class="col-md-12">
 				<div class="w-box" id="w_sort01">
-					<div class="w-box-header">Series</div>
+					<div class="w-box-header">Series 1.12<div class="btn-group pull-right" style="    margin-top: 3px;">
+									<a href="#" class="btn bs_ttip btn-default btn-xs" data-placement="auto top" data-container="body" data-viewport="body" title="" data-original-title="Refresh list" 	onClick="getrefresh();"><i class="glyphicon glyphicon-refresh"></i></a>
+							
+						</div></div>
+					
+					
 					<div class="w-box-content cnt_a">
 						<div class="sepH_b col-sm-3" style="display:none;">
 
-							<label for="mode">Series </label> <select
+							<label for="mode">Series</label> <select
 								name="series_list" id="series_list"
 								class="form-control" onchange="getsubseriesinfo();">
 
@@ -49,11 +55,11 @@ th { white-space: nowrap; }
 						</div>
 						<div class="sepH_b col-sm-3" style="display:none;">
 
-							<label for="mode">Sub Series </label> <select
+							<!-- <label for="mode">1.8 Uptime per camera</ > <select
 								name="sub_series_list" id="sub_series_list"
 								class="form-control">
 
-							</select>
+							</select> -->
 						</div>
 						<div class="sepH_b col-sm-3">
 
@@ -76,12 +82,12 @@ th { white-space: nowrap; }
 						</div>
 						<div class="clearfix">
 							<div class="col-sm-6  mt-1">
-							<button class="btn btn-warning mr-1  " value="refresh" id="refresh"  onClick="getrefresh();"
-									>Refresh</button>
+							<!-- <button class="btn btn-warning mr-1  " value="refresh" id="refresh"  onClick="getrefresh();"
+									>Refresh</button> -->
 								<button class="btn btn-primary mr-1 " value="Search" id="search"
 									onClick="getsearch('1');">Search</button>
-							 	 <button class="btn btn-info mr-1" value="Export to Excel" id="exporttoexcel"
-									onclick="getexlview_ins()" style="display:none;"> Export to Excel</button>
+							 	 <!-- <button class="btn btn-info mr-1" value="Export to Excel" id="exporttoexcel"
+									onclick="getexlview_ins()" style="display:none;"> Export to Excel</button> -->
 								
 							</div>
 						</div>
@@ -118,7 +124,7 @@ th { white-space: nowrap; }
 		location.reload();
 	}
 	
-	function getexlview_ins(){
+	<%-- function getexlview_ins(){
 		//	alert("hi");
 			var number = getUrlVars()["req"];
 var o = "<%=itcnt%>";
@@ -126,7 +132,7 @@ var j = "<%=ksize%>";
 var  m = "<%=iv%>";
 var l = "<%=salt%>";			
 var k = new AesUtil(j, o);	
-var result = k.decrypt(l, m, "data", number);			
+var result = k.decrypt(l, m, "data", number);	 	
 var id=result;
 if(id!="No"){
 	var sid ="",sno="",sname="";
@@ -144,16 +150,16 @@ var series_list="";
 		var sub_series_list=sno;
 var dp_start=$("#dp_start").val();
 var dp_end=$("#dp_end").val();
-		<%-- 	var excel = path+'/ExporttoExcel_2.jsp?uid=<%=session_vid_resouce%>&fdate='+dp_start+'&tdate='+dp_end+'&sub_series_list='+sub_series_list+'&sname='+sname+'&exportToExcel=YES'; --%>
+			var excel = path+'/ExporttoExcel_2.jsp?uid=<%=session_vid_resouce%>&fdate='+dp_start+'&tdate='+dp_end+'&sub_series_list='+sub_series_list+'&sname='+sname+'&exportToExcel=YES';
 		var excel = path+'/ExporttoExcel_1.jsp?uid=<%=session_vid_resouce%>&fdate='+dp_start+'&tdate='+dp_end+'&sub_series_list='+sub_series_list+'&sname='+sname;
 		
 			
 		document.location.href=excel;
 }
 			}
-	
+	 --%>
 		var jq = jQuery.noConflict(true);
-	function getsubseriesinfo(){
+/* 	function getsubseriesinfo(){
 		var headerseries=$("#series_list").val();
 		
 		if(headerseries!=""){
@@ -184,23 +190,23 @@ var dp_end=$("#dp_end").val();
 		}
 	return false;
 
-	}
-	function getUrlVars() {
+	} */
+/* 	function getUrlVars() {
 	    var vars = {};
 	    var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
 	        vars[key] = value;
 	    });
 	    return vars;
-	}
+	} */
 	//List of Reports
 	//getsearch();
 	
-		$(document).ready(function () {
+/* 		$(document).ready(function () {
      				
 	 
 					   // getsearch('1');    
 				 
-			});
+			}); */
 			var vahan_pageIndex="1",vahan_totrecord="0",vahan_rowrecord="0";
 			function getrecords(id){
 				//alert(id);
@@ -238,14 +244,17 @@ var dp_end=$("#dp_end").val();
 	
 	function getsearch(vahan_pageIndex) {
 		
-			  	var number = getUrlVars()["req"];	
+<%-- 			  	var number = getUrlVars()["req"];	
 		var o = "<%=itcnt%>";
 		var j = "<%=ksize%>";
 		var  m = "<%=iv%>";
 		var l = "<%=salt%>";			
 		var k = new AesUtil(j, o);	
-		var result = k.decrypt(l, m, "data", number);	
-		var id=result;
+		var result = k.decrypt(l, m, "data", number);	 --%>
+		//var id="1.8~Uptime per camera";
+		var series_no="<%=series_name_1_12%>",series_name="<%=series_main_module_name_1%>";
+		
+		var id = series_no+"~"+series_name;
 		
 		if(id!="No"){
 			var sid ="",sno="",sname="";
@@ -254,13 +263,13 @@ var dp_end=$("#dp_end").val();
 			 sno = fields[0];
 			 sname = fields[1];
 			
-		if (typeof sno != 'undefined'){
+	/* 	if (typeof sno != 'undefined'){
 				$("#seriesname").html(sno+" "+sname);
 		}else{
 			$("#seriesname").html("");
-		}	
+		} */	
 		var series_list="";
-				var sub_series_list=sno;
+		var sub_series_list=sno;
 		var dp_start=$("#dp_start").val();
 		var dp_end=$("#dp_end").val();
 		 $("#search").attr("disabled", true);
@@ -278,13 +287,15 @@ $.ajax({
 				var uniqueavg=0,onlineavg=0,offlineavg=0,ratioliveavg=0,peravg=0;
 				var uniquetotavg=0,onlinetotavg=0,offlinetotavg=0,ratiototavg=0,pertotavg=0;			
 				var cond='<table class="table table-striped table-bordered table-condensed  "	id="reportdata" width="100%"><thead><tr id="msgcnt"><th colspan="9" ><div id="rowpintdiv" style="font-weight:bold;"><div class="recordscnt">Total Records - <span id="passport_row_totcnt"></span>/<span id="passport_row_cnt"></span></div></th></tr>';
-				if(sub_series_list!="<%=series_name_1_1a%>" && sub_series_list!="<%=series_name_1_1b%>" && sub_series_list!="<%=series_name_1_2%>" && sub_series_list!="<%=series_name_1_8%>" && sub_series_list!="<%=series_name_1_9%>" && sub_series_list!="<%=series_name_1_12%>"){
+				if(sub_series_list!="<%=series_name_1_1a%>" && sub_series_list!="<%=series_name_1_1b %>" && sub_series_list!="<%=series_name_1_2%>" && sub_series_list!="<%=series_name_1_8%>" && sub_series_list!="<%=series_name_1_9%>" && sub_series_list!="<%=series_name_1_12%>")
+				{
 					 cond=cond+'<tr><th colspan="3"></th><th  colspan="4" style="text-align:center;" >Camera Count</th><th colspan="2" ></th></tr>';
 				 cond=cond+'<tr><th class="text-center">Sl.No</th><th class="text-center;">System  IPaddress</th><th class="text-center">AVG-Display FPS</th><th class="text-center">Unique</th><th class="text-center">Online </th><th class="text-center">Offline</th><th class="text-center">Ratio Live Camera </th><th class="text-center">Location</th> <th>Date</th></tr></thead><tbody>';
 				}else{
 					if(sub_series_list=="<%=series_name_1_8%>"){
 					cond=cond+'<tr><th class="text-center" style="width:5%;">Sl.No</th><th class="text-center"  style="width:13%;">Date Time</th><th class="text-center">Name</th><th class="text-center">Online</th><th class="text-center">Offline</th><th class="text-center">Uptime(%)</th> </tr></thead><tbody>';
-					}else if(sub_series_list=="<%=series_name_1_9%>"){
+					}
+					else if(sub_series_list=="<%=series_name_1_9%>"){
 						cond=cond+'<tr><th class="text-center" style="width:5%;">Sl.No</th><th class="text-center">System IP</th><th class="text-center">Good</th><th class="text-center">Bad</th><th class="text-center">Date</th><th class="text-center">Percentage</th> </tr></thead><tbody>';	
 					}
 					else if(sub_series_list=="<%=series_name_1_1a%>"){
@@ -511,7 +522,7 @@ $.ajax({
 		});	
 
 //dropdown
-function getserieslist() {
+/* function getserieslist() {
 	$.ajax({
 				type : "post",
 				url : path + "/Fetching_Series_List",
@@ -533,8 +544,10 @@ function getserieslist() {
 				    }
 			});
 		return false;
-	}
+	} */
 						
 	</script>
 
 </div>
+
+ 
