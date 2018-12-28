@@ -5,6 +5,7 @@
 <html>
 <head>
 <meta charset="UTF-8" />
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SLA</title>
 <link rel="shortcut icon" href="img/MCS-Logo.jpg" />
@@ -48,6 +49,7 @@
 
 <!-- favicon -->
 <%--<link rel="shortcut icon" href="favicon.ico" />--%>
+
 <script src="js/jquery.min.js"></script>
 <script src="js/jquery-2.1.3.min.js"></script>
 <script src="js/sweetalert.min.js"></script>
@@ -102,11 +104,6 @@ to {
 .active {
     background-color: #666;
     color: white;
-}
-
-
-#userDetails,th,td{
-	padding : 5px;
 }
 </style>
 
@@ -403,10 +400,12 @@ $(function(){var a=[path+"/lib/validation/jquery.validate.js",path+"/js/aes.js",
 												<ul class="dropdown-menu">
 													<li><a href="user_reg.jsp">User Registration</a></li>
 													<li><a href="users.jsp">User Details</a></li>
-												</ul>
-										</li>
+												
+												</ul></li>
 									
 									<%} %>	
+							
+								
 						</ul>
 						<ul class="nav navbar-nav user_menu pull-right">
 							<li class="dropdown"><a href="#" class="dropdown-toggle"
@@ -414,7 +413,7 @@ $(function(){var a=[path+"/lib/validation/jquery.validate.js",path+"/js/aes.js",
 									alt="" class="user_avatar" /><%=session_officername%> <b
 									class="caret"></b></a>
 								<ul class="dropdown-menu dropdown-menu-right">
-									<li><a data-toggle="modal" data-target="#currentUserDt" onclick="view_details(<%=session_vid_resouce%>)" style="cursor:pointer">My Profile</a></li>
+									<li><a href="#">My Profile</a></li>
 									<li><a href="change_pw.jsp">Change Password</a></li>
 									<li class="divider"></li>
 									<li><a href="javascript:void(0)" onclick="getlogout();">Log
@@ -427,7 +426,7 @@ $(function(){var a=[path+"/lib/validation/jquery.validate.js",path+"/js/aes.js",
 		</header>
 		<a href="javascript:void(0)" class="sidebar_switch on_switch bs_ttip"
 			data-placement="auto right" data-viewport="body" title="Hide Sidebar">Sidebar
-			switch</a>
+			switch</a> 
 		<div class="sidebar">
 			<div class="sidebar_inner_scroll">
 				<div class="sidebar_inner">
@@ -451,7 +450,8 @@ $(function(){var a=[path+"/lib/validation/jquery.validate.js",path+"/js/aes.js",
 							<div class="panel-heading">
 								<a href="#collapseTwo" data-parent="#side_accordion"
 									data-toggle="collapse" class="accordion-toggle"> <!-- <i
-									class="glyphicon glyphicon-th"></i> --> <b> Modules</b>
+									class="glyphicon glyphicon-th"></i> -->
+									<b> Modules</b>
 								</a>
 							</div>
 						</div>
@@ -465,7 +465,7 @@ $(function(){var a=[path+"/lib/validation/jquery.validate.js",path+"/js/aes.js",
 							<div class="accordion-body collapse" id="collapseTwo">
 								<div class="panel-body">
 									<ul class="nav nav-pills nav-stacked">
-										<!-- 	<li><a href="#">1.1</a><b class="caret-right"></b>
+									<!-- 	<li><a href="#">1.1</a><b class="caret-right"></b>
 											<ul class="dropdown-menu">
 												<li><a href="series_1.1a.jsp">1.1 (a)</a></li>
 												<li><a href="series_1.1b.jsp">1.1 (b)</a></li>
@@ -500,8 +500,8 @@ $(function(){var a=[path+"/lib/validation/jquery.validate.js",path+"/js/aes.js",
 								</a>
 							</div>
 							<div class="accordion-body collapse" id="collapseThree">
-								<div class="panel-body" style="padding: 5px;">
-									<ul class="nav nav-pills nav-stacked">
+								<div class="panel-body"  style="padding:5px;">
+									<ul class="nav nav-pills nav-stacked" >
 
 										<li class="nav-header">2.1</li>
 										<li><a href="series_2.1a.jsp">2.1 (a)</a></li>
@@ -576,11 +576,11 @@ $(function(){var a=[path+"/lib/validation/jquery.validate.js",path+"/js/aes.js",
 							</div>
 						</div>
 						<!-- Series 5 -->
-						<div class="panel panel-default ">
+						<div class="panel panel-default " >
 							<div class="panel-heading ">
 								<a href="#collapsesix" data-parent="#side_accordion"
 									data-toggle="collapse" class="accordion-toggle"> <i
-									class="glyphicon glyphicon-th "></i><b> Series 5</b>
+									class="glyphicon glyphicon-th "></i><b > Series 5</b>
 								</a>
 							</div>
 							<div class="accordion-body collapse" id="collapsesix">
@@ -755,29 +755,7 @@ $(function(){var a=[path+"/lib/validation/jquery.validate.js",path+"/js/aes.js",
 				</div>
 			</div>
 		</div>
-		<div class="modal fade" id="currentUserDt" role="dialog">
-			<div class="modal-dialog modal-md">
-				<!-- Modal content-->
-				<div class="modal-content">
-					<div class="modal-header">
-						<button type="button" class="close" id="btn_click"
-							data-dismiss="modal">&times;</button>
-						<h4 class="modal-title" id="user_name"
-							style="text-align: center; font-weight: 700"></h4>
-					</div>
-					<div class="modal-body well">
-						<form>
-							<table>
-								<tbody id="currentUsersDetails"></tbody>
-							</table>
-						</form>
-					</div>
-					<div class="modal-footer">
-						<button type="button" data-dismiss="modal" class="btn btn-danger">CLOSE</button>
-					</div>
-				</div>
-			</div>
-		</div>
+		<!-- </div> -->
 		<div id="contentwrapper">
 			<script src="js/jquery-migrate.min.js"></script>
 			<script src="lib/jquery-ui/jquery-ui-1.10.0.custom.min.js"></script>
@@ -830,44 +808,12 @@ $(function(){var a=[path+"/lib/validation/jquery.validate.js",path+"/js/aes.js",
 			<!-- datatables bootstrap integration -->
 			<script src="lib/datatables/jquery.dataTables.bootstrap.min.js"></script>
 			<!-- datatable functions -->
-			</div>
 			<script src="js/pages/gebo_datatables.js"></script>
 			<script>
-			function getlogout(){
-				document.location.href = "<%=request.getContextPath()%>/Sessionterminate";
-			}
+function getlogout(){
+	document.location.href = "<%=request.getContextPath()%>/Sessionterminate";
+}
 
-
-			function view_details(id){
-				var t=id;
-				$.ajax({			
-						type : "GET",
-						url : path +"/Fetching_user_details",
-						async : false,
-						data:{id:t},
-						success : function(data) { 
-							var temp = JSON.parse(data);
-							$.each(temp,function (key, data){					
-								$('#user_name').text(data.officer_name+"'s Details");
-									var k="";
-										k+='<tr><th>User ID</th><td>:</td><td>'+data.id+'</td></tr>';
-										k+='<tr><th>Officer Name</th><td>:</td><td>'+data.officer_name+'</td></tr>';
-										k+='<tr><th>Username</th><td>:</td><td>'+data.user_name+'</td></tr>';
-										k+='<tr><th>Password</th><td>:</td><td>'+data.password+'</td></tr>';
-										k+='<tr><th>Department</th><td>:</td><td>'+data.department+'</td></tr>';
-										k+='<tr><th>Role</th><td>:</td><td>'+data.role+'</td></tr>';
-										k+='<tr><th>Registered Date</th><td>:</td><td>'+data.officer_name+'</td></tr>';
-										document.getElementById('currentUsersDetails').innerHTML = k;
-										
-							});
-						},
-						error : function(xhr, errorType, exception) {
-							alert("Error :"+xhr.status);
-						},
-						complete : function() {}
-					});
-					return false;
-			}
 
 </script>
 </body>
